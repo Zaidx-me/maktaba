@@ -1,4 +1,26 @@
-export const DarkColors = {
+export interface AppColors {
+  background: string;
+  surface: string;
+  surfaceElevated: string;
+  card: string;
+  primary: string;
+  primarySoft: string;
+  white: string;
+  textPrimary: string;
+  textSecondary: string;
+  textMuted: string;
+  border: string;
+  borderLight: string;
+  overlay: string;
+  glass: string;
+  glassLight: string;
+  success: string;
+  warning: string;
+  error: string;
+  gradient: [string, string];
+}
+
+export const DarkColors: AppColors = {
   background: '#000000',
   surface: '#121212',
   surfaceElevated: '#1C1C1E',
@@ -18,9 +40,9 @@ export const DarkColors = {
   warning: '#FF9F0A',
   error: '#FF453A',
   gradient: ['#ff6b6b', '#ee5a24'],
-} as const;
+};
 
-export const LightColors = {
+export const LightColors: AppColors = {
   background: '#F2F2F7',
   surface: '#FFFFFF',
   surfaceElevated: '#FFFFFF',
@@ -40,9 +62,7 @@ export const LightColors = {
   warning: '#FF9F0A',
   error: '#FF453A',
   gradient: ['#ff6b6b', '#ee5a24'],
-} as const;
-
-export type AppColors = typeof DarkColors;
+};
 
 export const Spacing = {
   xs: 4,

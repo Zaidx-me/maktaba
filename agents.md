@@ -13,8 +13,7 @@ Code must be placed in the appropriate domain folder inside `src/`. Never dump c
 `src/`
 ├── `assets/`          # Local static files and Lottie animations
 ├── `components/`      # Global UI only (Buttons, Inputs, Modals)
-├── `config/`          # theme.js, supabaseClient.js
-├── `features/`        # Domain-specific logic
+├── `config/`         # Domain-specific logic
 │   ├── `auth/`              # Login/Signup/Profile
 │   ├── `university/`        # BSIT Semesters, courses, resources
 │   ├── `intermediate/`      # FSc, ICS

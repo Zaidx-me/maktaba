@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   placeholderText: {
-    fontSize: FontSize.xxxl,
+    fontSize: FontSize.title,
     fontWeight: '800',
   },
   title: {

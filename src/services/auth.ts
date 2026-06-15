@@ -19,13 +19,19 @@ WebBrowser.maybeCompleteAuthSession();
 const WEB_CLIENT_ID = '991431752296-4t0cgi8u57093hcvfa381qt05tgtnd15.apps.googleusercontent.com';
 const ANDROID_CLIENT_ID = '991431752296-4t0cgi8u57093hcvfa381qt05tgtnd15.apps.googleusercontent.com';
 
+// For production APK, the app scheme (zesho://) is used automatically.
+// For Google Auth to work, add this redirect URI to Google Cloud Console:
+//   zesho://oauthredirect
+// Then you can remove the `redirectUri` option below to use the auto scheme.
+// NOTE: Google OAuth may not work in all environments without proper redirect config.
+// Email/password auth is the primary fallback.
+
 // --- Google Auth ---
 export function useGoogleAuth() {
   const [request, response, promptAsync] = Google.useAuthRequest({
     webClientId: WEB_CLIENT_ID,
     androidClientId: ANDROID_CLIENT_ID,
     scopes: ['profile', 'email'],
-    useProxy: true,
   });
   return { request, response, promptAsync };
 }

@@ -149,7 +149,7 @@ export default function BookDetailScreen() {
         {/* BG */}
         <View style={styles.bgWrap}>
           {book.thumbnail ? <Image source={{ uri: book.thumbnail }} style={styles.bgImg} /> : null}
-          <LinearGradient colors={[colors.isDark ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)', colors.isDark ? 'rgba(0,0,0,0.97)' : 'rgba(242,242,247,0.97)']} style={styles.bgGrad} />
+          <LinearGradient colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.97)']} style={styles.bgGrad} />
         </View>
 
         {/* Header */}
