@@ -40,51 +40,99 @@ function compactToBook(book: CompactBook): Book {
   };
 }
 
-// Pre-build the full list at module load time
-const ALL_URDU_BOOKS: Book[] = data.books.map(compactToBook);
+// Lazy-initialized caches — only built when first accessed
+let _allBooks: Book[] | null = null;
+let _categoryIndex: Record<string, Book[]> | null = null;
+let _mainCategoryIndex: Record<string, Book[]> | null = null;
 
-// Build category index — each book indexed by its categories field
-const CATEGORY_INDEX: Record<string, Book[]> = {};
-for (const book of ALL_URDU_BOOKS) {
-  for (const cat of book.categories) {
-    const key = cat.toLowerCase();
-    if (!CATEGORY_INDEX[key]) CATEGORY_INDEX[key] = [];
-    CATEGORY_INDEX[key].push(book);
-  }
+function getAllBooks(): Book[] {
+  if (!_allBooks) _allBooks = data.books.map(compactToBook);
+  return _allBooks;
 }
 
-// Build main-category index — each book indexed by its original cat field
-const MAIN_CATEGORY_INDEX: Record<string, Book[]> = {};
-for (const raw of data.books) {
-  for (const cat of raw.cat) {
-    if (!MAIN_CATEGORY_INDEX[cat]) MAIN_CATEGORY_INDEX[cat] = [];
-    MAIN_CATEGORY_INDEX[cat].push(compactToBook(raw));
+function getCategoryIndex(): Record<string, Book[]> {
+  if (!_categoryIndex) {
+    _categoryIndex = {};
+    for (const book of getAllBooks()) {
+      for (const cat of book.categories) {
+        const key = cat.toLowerCase();
+        if (!_categoryIndex[key]) _categoryIndex[key] = [];
+        _categoryIndex[key].push(book);
+      }
+    }
   }
+  return _categoryIndex;
+}
+
+function getMainCategoryIndex(): Record<string, Book[]> {
+  if (!_mainCategoryIndex) {
+    _mainCategoryIndex = {};
+    for (const raw of data.books) {
+      for (const cat of raw.cat) {
+        if (!_mainCategoryIndex[cat]) _mainCategoryIndex[cat] = [];
+        _mainCategoryIndex[cat].push(compactToBook(raw));
+      }
+    }
+  }
+  return _mainCategoryIndex;
 }
 
 export function getUrduBooksByCategory(category: string, limit?: number): Book[] {
   const key = category.toLowerCase();
-  const result = CATEGORY_INDEX[key] || [];
+  const result = getCategoryIndex()[key] || [];
   return limit ? result.slice(0, limit) : result;
 }
 
 export function getUrduBooksByMainCategory(mainCategory: string, limit?: number): Book[] {
-  const result = MAIN_CATEGORY_INDEX[mainCategory] || [];
+  const result = getMainCategoryIndex()[mainCategory] || [];
   return limit ? result.slice(0, limit) : result;
 }
 
 export function getAllUrduBooks(limit?: number): Book[] {
-  return limit ? ALL_URDU_BOOKS.slice(0, limit) : ALL_URDU_BOOKS;
+  const books = getAllBooks();
+  return limit ? books.slice(0, limit) : books;
+}
+
+// Pre-built title index for faster search
+let _titleIndex: Map<string, Book[]> | null = null;
+
+function buildTitleIndex(): Map<string, Book[]> {
+  if (!_titleIndex) {
+    _titleIndex = new Map();
+    for (const book of getAllBooks()) {
+      const key = book.title.toLowerCase();
+      if (!_titleIndex.has(key)) _titleIndex.set(key, []);
+      _titleIndex.get(key)!.push(book);
+
+      // Also index by author
+      for (const author of book.authors) {
+        const aKey = author.toLowerCase();
+        if (!_titleIndex.has(aKey)) _titleIndex.set(aKey, []);
+        _titleIndex.get(aKey)!.push(book);
+      }
+    }
+  }
+  return _titleIndex;
 }
 
 export function searchUrduBooks(query: string, limit: number = 20): Book[] {
   const q = query.toLowerCase();
-  return ALL_URDU_BOOKS.filter(
-    b =>
-      b.title.toLowerCase().includes(q) ||
-      b.authors.some(a => a.toLowerCase().includes(q)) ||
-      b.description.toLowerCase().includes(q)
-  ).slice(0, limit);
+  const books = getAllBooks();
+  const titleIndex = buildTitleIndex();
+
+  // Try exact index match first (O(1))
+  const exactMatch = titleIndex.get(q);
+  if (exactMatch && exactMatch.length >= limit) return exactMatch.slice(0, limit);
+
+  // Fallback to filtered search
+  return books
+    .filter(
+      b =>
+        b.title.toLowerCase().includes(q) ||
+        b.authors.some(a => a.toLowerCase().includes(q)) ||
+        b.description.toLowerCase().includes(q)
+    )
+    .slice(0, limit);
 }
 
 export function getUrduCategories(): string[] {
@@ -116,6 +164,19 @@ export function getUrduBookCount(): number {
   return data.total;
 }
 
+// Build a map for O(1) ID lookup
+let _idMap: Map<string, Book> | null = null;
+
+function getIdMap(): Map<string, Book> {
+  if (!_idMap) {
+    _idMap = new Map();
+    for (const book of getAllBooks()) {
+      _idMap.set(book.id, book);
+    }
+  }
+  return _idMap;
+}
+
 export function getUrduBookById(id: string): Book | null {
-  return ALL_URDU_BOOKS.find(b => b.id === id) || null;
+  return getIdMap().get(id) || null;
 }

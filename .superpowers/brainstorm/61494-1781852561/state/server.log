@@ -1,0 +1,4 @@
+{"type":"server-started","port":49325,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:49325/?key=73bd929e01345fbe401a037e1c36ba38a68dfdbc1fb545314239bcbcf05767c1","screen_dir":"/run/media/zaidxme/University/Summer/BooksApp/Zesho/.superpowers/brainstorm/61494-1781852561/content","state_dir":"/run/media/zaidxme/University/Summer/BooksApp/Zesho/.superpowers/brainstorm/61494-1781852561/state","idle_timeout_ms":14400000}
+{"type":"screen-added","file":"/run/media/zaidxme/University/Summer/BooksApp/Zesho/.superpowers/brainstorm/61494-1781852561/content/components.html"}
+{"type":"screen-added","file":"/run/media/zaidxme/University/Summer/BooksApp/Zesho/.superpowers/brainstorm/61494-1781852561/content/refined-design.html"}
+{"type":"screen-added","file":"/run/media/zaidxme/University/Summer/BooksApp/Zesho/.superpowers/brainstorm/61494-1781852561/content/premium-home.html"}
