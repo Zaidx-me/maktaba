@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Book } from '../types';
-import { Spacing, FontSize, BorderRadius } from '../constants/theme';
+import { Spacing, FontSize, BorderRadius, Shadows } from '../constants/theme';
 import { useTheme } from '../context/ThemeContext';
 import { BookCoverPlaceholder, BookSkeleton } from './BookCoverPlaceholder';
 
@@ -25,7 +25,7 @@ export const BookCard = React.memo(function BookCard({ book, onPress, size = 140
     }
   };
 
-  const imageHeight = size * 1.35;
+  const imageHeight = size * 1.4;
 
   if (loading) {
     return (
@@ -41,15 +41,18 @@ export const BookCard = React.memo(function BookCard({ book, onPress, size = 140
       onPress={handlePress}
       activeOpacity={0.7}
     >
-      <View style={[styles.imageContainer, { width: size, height: imageHeight }]}>
+      <View style={[styles.imageContainer, { width: size, height: imageHeight, borderRadius: BorderRadius.lg }]}>
         {book.thumbnail ? (
           <Image
-            source={{ uri: book.thumbnail }}
+            source={{ uri: book.thumbnail, cache: 'force-cache' }}
             style={styles.image}
+            fadeDuration={300}
+            resizeMode="cover"
           />
         ) : (
           <BookCoverPlaceholder title={book.title} width={size} height={imageHeight} />
         )}
+        <View style={styles.spine} />
       </View>
       <Text
         style={[styles.title, { color: colors.textPrimary }]}
@@ -57,6 +60,11 @@ export const BookCard = React.memo(function BookCard({ book, onPress, size = 140
       >
         {book.title}
       </Text>
+      {book.authors?.[0] && (
+        <Text style={[styles.author, { color: colors.textSecondary }]} numberOfLines={1}>
+          {book.authors[0]}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 });
@@ -66,20 +74,33 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   imageContainer: {
-    borderRadius: BorderRadius.md,
     overflow: 'hidden',
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.md,
+    ...Shadows.card,
   },
   image: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
   },
-  title: {
-    fontSize: FontSize.bodySm,
-    fontWeight: '500',
-    lineHeight: 18,
-    letterSpacing: -0.1,
+  spine: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 3,
+    backgroundColor: 'rgba(0,0,0,0.15)',
   },
-
+  title: {
+    fontSize: FontSize.bodySmMedium,
+    fontWeight: '600',
+    lineHeight: 18,
+    letterSpacing: -0.2,
+  },
+  author: {
+    fontSize: FontSize.sm,
+    fontWeight: '400',
+    marginTop: Spacing.xxs,
+    letterSpacing: 0.1,
+  },
 });
