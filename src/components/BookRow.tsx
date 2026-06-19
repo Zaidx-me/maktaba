@@ -5,7 +5,6 @@ import { SectionHeader } from './SectionHeader';
 import { SkeletonRow } from './SkeletonLoader';
 import { Book } from '../types';
 import { Spacing } from '../constants/theme';
-import { useTheme } from '../context/ThemeContext';
 
 interface BookRowProps {
   title: string;
@@ -26,6 +25,7 @@ function areBooksEqual(a: Book[], b: Book[]) {
 
 function areRowPropsEqual(prev: BookRowProps, next: BookRowProps) {
   return prev.title === next.title
+    && prev.label === next.label
     && prev.loading === next.loading
     && prev.bookSize === next.bookSize
     && prev.onSeeAll === next.onSeeAll
@@ -33,8 +33,6 @@ function areRowPropsEqual(prev: BookRowProps, next: BookRowProps) {
 }
 
 export const BookRow = React.memo(function BookRow({ title, label, books, loading, bookSize = 140, onSeeAll }: BookRowProps) {
-  const { colors } = useTheme();
-
   if (loading) {
     return (
       <View style={styles.container}>
