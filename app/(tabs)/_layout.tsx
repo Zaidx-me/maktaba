@@ -1,12 +1,12 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/context/ThemeContext';
 
 export default function TabsLayout() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const bottomPadding = Platform.OS === 'ios' ? 28 : Math.max(insets.bottom, 8);
 
@@ -16,19 +16,26 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarStyle: {
           position: 'absolute' as const,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          borderTopWidth: 0.5,
-          borderTopColor: colors.border,
-          elevation: 0,
-          shadowOpacity: 0,
-          height: 60 + bottomPadding,
-          paddingTop: 8,
+          bottom: 16,
+          left: 16,
+          right: 16,
+          height: 64 + bottomPadding,
+          paddingTop: 10,
           paddingBottom: bottomPadding,
-          backgroundColor: colors.tabBg,
+          backgroundColor: colors.glass,
+          borderRadius: 24,
+          borderWidth: 0.5,
+          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+          elevation: 0,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: isDark ? 0.3 : 0.12,
+          shadowRadius: 32,
+          // @ts-ignore
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
         },
-        tabBarActiveTintColor: colors.textPrimary,
+        tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarShowLabel: true,
         tabBarLabelStyle: styles.tabLabel,
@@ -39,28 +46,36 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={22} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="shelf"
         options={{
           title: 'Category',
-          tabBarIcon: ({ color, size }) => <Ionicons name="grid" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="grid" size={22} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="library"
         options={{
           title: 'Library',
-          tabBarIcon: ({ color, size }) => <Ionicons name="library" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="library" size={22} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={22} color={color} />
+          ),
         }}
       />
       <Tabs.Screen name="search" options={{ href: null }} />
@@ -70,5 +85,9 @@ export default function TabsLayout() {
 }
 
 const styles = StyleSheet.create({
-  tabLabel: { fontSize: 10, fontWeight: '500' },
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    letterSpacing: 0.2,
+  },
 });
