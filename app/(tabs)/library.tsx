@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useDebounce } from '../../src/hooks/useDebounce';
 import {
-  View, Text, StyleSheet, TextInput,
+  View, Text, StyleSheet,
   ActivityIndicator, TouchableOpacity,
   FlatList,
 } from 'react-native';
@@ -15,6 +16,7 @@ import { Spacing, FontSize, BorderRadius } from '../../src/constants/theme';
 import { BookCoverPlaceholder } from '../../src/components/BookCoverPlaceholder';
 import { useRouter } from 'expo-router';
 import { Image } from 'react-native';
+import { SearchBar } from '../../src/components/SearchBar';
 
 const PAGE_SIZE = 80;
 
@@ -32,7 +34,7 @@ function LibraryBookCard({ book }: { book: Book }) {
     >
       <View style={[styles.cardImg, { width: W, height: H, borderRadius: BorderRadius.md }]}>
         {book.thumbnail ? (
-          <Image source={{ uri: book.thumbnail }} style={styles.cardImgInner} />
+          <Image source={{ uri: book.thumbnail, cache: 'force-cache' }} style={styles.cardImgInner} fadeDuration={300} />
         ) : (
           <BookCoverPlaceholder title={book.title} width={W} height={H} />
         )}
@@ -56,6 +58,7 @@ export default function LibraryScreen() {
   const [allBooks, setAllBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 300);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -88,13 +91,13 @@ export default function LibraryScreen() {
   }, []);
 
   const filteredBooks = useMemo(() => {
-    if (!query.trim()) return allBooks;
-    const q = query.toLowerCase();
+    if (!debouncedQuery.trim()) return allBooks;
+    const q = debouncedQuery.toLowerCase();
     return allBooks.filter(b =>
       b.title.toLowerCase().includes(q) ||
       b.authors?.some(a => a.toLowerCase().includes(q))
     );
-  }, [allBooks, query]);
+  }, [allBooks, debouncedQuery]);
 
   const displayedBooks = useMemo(() => {
     return filteredBooks.slice(0, page * PAGE_SIZE);
@@ -104,11 +107,6 @@ export default function LibraryScreen() {
 
   const handleSearch = useCallback((text: string) => {
     setQuery(text);
-    setPage(1);
-  }, []);
-
-  const handleClear = useCallback(() => {
-    setQuery('');
     setPage(1);
   }, []);
 
@@ -134,24 +132,15 @@ export default function LibraryScreen() {
           </Text>
         </View>
       </View>
-      <View style={[styles.searchWrap, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
-        <Ionicons name="search" size={18} color={colors.textMuted} />
-        <TextInput
-          style={[styles.searchInput, { color: colors.textPrimary }]}
-          placeholder="Search all books..."
-          placeholderTextColor={colors.textMuted}
+      <View style={{ paddingHorizontal: Spacing.xxl, marginTop: Spacing.lg }}>
+        <SearchBar
           value={query}
           onChangeText={handleSearch}
-          returnKeyType="search"
+          placeholder="Search all books..."
         />
-        {query.length > 0 && (
-          <TouchableOpacity onPress={handleClear} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Ionicons name="close-circle" size={18} color={colors.textMuted} />
-          </TouchableOpacity>
-        )}
       </View>
     </View>
-  ), [insets, colors, filteredBooks.length, query, handleSearch, handleClear]);
+  ), [insets, colors, filteredBooks.length, query, handleSearch]);
 
   const footer = useMemo(() => {
     if (!hasMore) return <View style={{ height: 100 }} />;
@@ -210,22 +199,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'flex-end', marginBottom: Spacing.md,
   },
-  title: { fontSize: FontSize.heading2, fontWeight: '800', letterSpacing: -1 },
-  subtitle: { fontSize: FontSize.xs, marginTop: 2 },
-
-  searchWrap: {
-    flexDirection: 'row', alignItems: 'center',
-    marginHorizontal: Spacing.xxl,
-    paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.lg, height: 46,
-    gap: Spacing.sm, borderWidth: 1,
-    marginBottom: Spacing.md,
-  },
-  searchInput: { flex: 1, fontSize: FontSize.bodyMd },
+  title: { fontSize: FontSize.heading1, fontWeight: '800', letterSpacing: -1 },
+  subtitle: { fontSize: FontSize.sm, marginTop: 2 },
 
   gridRow: {
     paddingHorizontal: Spacing.xxl,
-    gap: Spacing.md,
+    gap: Spacing.lg,
   },
   bookWrap: {
     flex: 1,
