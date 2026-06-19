@@ -1,0 +1,56 @@
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
+import { Spacing, FontSize } from '../constants/theme';
+
+interface SectionHeaderProps {
+  label?: string;
+  title: string;
+  seeAllText?: string;
+  onSeeAll?: () => void;
+}
+
+export function SectionHeader({ label, title, seeAllText = 'See all', onSeeAll }: SectionHeaderProps) {
+  const { colors } = useTheme();
+
+  return (
+    <View style={styles.container}>
+      <View>
+        {label && (
+          <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
+        )}
+        <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
+      </View>
+      {onSeeAll && (
+        <TouchableOpacity onPress={onSeeAll}>
+          <Text style={[styles.seeAll, { color: colors.accent }]}>{seeAllText}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginBottom: Spacing.lg,
+  },
+  label: {
+    fontSize: FontSize.xs,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    marginBottom: Spacing.xs,
+  },
+  title: {
+    fontSize: FontSize.heading3,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  seeAll: {
+    fontSize: FontSize.bodyMd,
+    fontWeight: '500',
+  },
+});
