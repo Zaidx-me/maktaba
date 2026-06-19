@@ -5,7 +5,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Spacing, FontSize, BorderRadius } from '../src/constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../src/constants/theme';
 import { useTheme } from '../src/context/ThemeContext';
 import { getDismissedNotifications, dismissNotification } from '../src/services/localDb';
 
@@ -49,16 +49,16 @@ function SwipeableNotif({ notif, onDismiss, colors }: { notif: Notification; onD
 
   return (
     <Animated.View style={[styles.notifAnimated, { opacity, transform: [{ translateX }] }]}>
-      <View style={[styles.deleteBg, { backgroundColor: colors.surfaceElevated }]}>
-        <Ionicons name="trash-outline" size={18} color={colors.textSecondary} />
-        <Text style={[styles.deleteText, { color: colors.textSecondary }]}>Dismiss</Text>
+      <View style={[styles.deleteBg, { backgroundColor: colors.error }]}>
+        <Ionicons name="trash-outline" size={18} color="#fff" />
+        <Text style={[styles.deleteText, { color: '#fff' }]}>Dismiss</Text>
       </View>
       <Animated.View {...panResponder.panHandlers} style={[styles.notifCard, {
         backgroundColor: colors.surfaceElevated,
-        borderLeftColor: colors.border,
-      }]}>
-        <View style={[styles.iconCircle, { backgroundColor: colors.primarySoft }]}>
-          <Ionicons name={notif.icon as any} size={20} color={colors.textPrimary} />
+        borderLeftColor: colors.accent,
+      }, Shadows.card]}>
+        <View style={[styles.iconCircle, { backgroundColor: colors.accentSoft }]}>
+          <Ionicons name={notif.icon as any} size={20} color={colors.accent} />
         </View>
         <View style={styles.notifContent}>
           <Text style={[styles.notifTitle, { color: colors.textPrimary }]}>{notif.title}</Text>
@@ -94,7 +94,7 @@ export default function NotificationsScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.accent} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Notifications</Text>
         {notifications.length > 0 ? (
@@ -102,7 +102,7 @@ export default function NotificationsScreen() {
             for (const n of notifications) await dismissNotification(n.id);
             setNotifications([]);
           }}>
-            <Text style={[styles.clearAll, { color: colors.textSecondary }]}>Clear all</Text>
+            <Text style={[styles.clearAll, { color: colors.accent }]}>Clear all</Text>
           </TouchableOpacity>
         ) : (
           <View style={styles.backBtn} />
@@ -111,7 +111,9 @@ export default function NotificationsScreen() {
 
       {notifications.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="notifications-off-outline" size={64} color={colors.textMuted} />
+          <View style={[styles.emptyIconCircle, { backgroundColor: colors.accentSoft }]}>
+            <Ionicons name="notifications-off-outline" size={48} color={colors.accent} />
+          </View>
           <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>All caught up!</Text>
           <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>No new notifications</Text>
         </View>
@@ -129,22 +131,23 @@ export default function NotificationsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.md },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.lg },
   backBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  headerTitle: { fontSize: FontSize.xl, fontWeight: '700' },
-  clearAll: { fontSize: FontSize.bodySm, fontWeight: '600' },
+  headerTitle: { fontSize: FontSize.heading4, fontWeight: FontWeight.bold },
+  clearAll: { fontSize: FontSize.bodyMd, fontWeight: FontWeight.semibold },
   list: { paddingHorizontal: Spacing.xxl, paddingBottom: 100 },
   notifAnimated: { marginBottom: Spacing.sm },
-  deleteBg: { position: 'absolute', right: 0, top: 0, bottom: 0, width: '100%', borderRadius: BorderRadius.md, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingRight: Spacing.xl, gap: Spacing.sm },
-  deleteText: { fontWeight: '600', fontSize: FontSize.bodySm },
-  notifCard: { flexDirection: 'row', alignItems: 'flex-start', padding: Spacing.md, borderRadius: BorderRadius.md, borderLeftWidth: 3 },
-  iconCircle: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.sm },
+  deleteBg: { position: 'absolute', right: 0, top: 0, bottom: 0, width: '100%', borderRadius: BorderRadius.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingRight: Spacing.xl, gap: Spacing.sm },
+  deleteText: { fontWeight: FontWeight.semibold, fontSize: FontSize.bodySm },
+  notifCard: { flexDirection: 'row', alignItems: 'flex-start', padding: Spacing.lg, borderRadius: BorderRadius.lg, borderLeftWidth: 3 },
+  iconCircle: { width: 44, height: 44, borderRadius: BorderRadius.xl, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md },
   notifContent: { flex: 1 },
-  notifTitle: { fontSize: FontSize.bodyMd, fontWeight: '600', marginBottom: 2 },
-  notifMessage: { fontSize: FontSize.bodySm, lineHeight: 18, marginBottom: 4 },
-  notifTime: { fontSize: FontSize.xs },
+  notifTitle: { fontSize: FontSize.bodyMdMedium, fontWeight: FontWeight.semibold, marginBottom: Spacing.xxs },
+  notifMessage: { fontSize: FontSize.bodySm, lineHeight: 20, marginBottom: Spacing.xs },
+  notifTime: { fontSize: FontSize.caption },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  emptyTitle: { fontSize: FontSize.xl, fontWeight: '600', marginTop: Spacing.lg },
-  emptySubtitle: { fontSize: FontSize.md, marginTop: Spacing.sm },
-  swipeHint: { fontSize: FontSize.xs, textAlign: 'center', marginTop: Spacing.lg },
+  emptyIconCircle: { width: 96, height: 96, borderRadius: BorderRadius.xxxl, justifyContent: 'center', alignItems: 'center' },
+  emptyTitle: { fontSize: FontSize.heading3, fontWeight: FontWeight.semibold, marginTop: Spacing.xl },
+  emptySubtitle: { fontSize: FontSize.bodyMd, marginTop: Spacing.sm },
+  swipeHint: { fontSize: FontSize.caption, textAlign: 'center', marginTop: Spacing.xl },
 });
