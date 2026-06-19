@@ -9,6 +9,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { BookCard } from '../src/components/BookCard';
 import { Book } from '../src/types';
 import { useTheme } from '../src/context/ThemeContext';
 import { useAuth } from '../src/context/AuthContext';
@@ -54,7 +55,7 @@ export default function HistoryScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Reading History</Text>
         <View style={styles.backBtn} />
@@ -62,7 +63,9 @@ export default function HistoryScreen() {
 
       {history.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="time-outline" size={64} color={colors.textSecondary} />
+          <View style={[styles.emptyIconContainer, { backgroundColor: colors.accentSoft }]}>
+            <Ionicons name="time-outline" size={40} color={colors.accent} />
+          </View>
           <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>No reading history</Text>
           <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
             Books you read will appear here
@@ -72,26 +75,14 @@ export default function HistoryScreen() {
         <FlatList
           data={history}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
+          numColumns={2}
+          contentContainerStyle={styles.grid}
+          columnWrapperStyle={styles.row}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[styles.historyItem, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}
-              onPress={() => router.push(`/book/${item.id}`)}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.thumb, { backgroundColor: colors.surface }]}>
-                <Ionicons name="book" size={20} color={colors.textSecondary} />
-              </View>
-              <View style={styles.historyInfo}>
-                <Text style={[styles.historyTitle, { color: colors.textPrimary }]} numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text style={[styles.historyAuthor, { color: colors.textSecondary }]} numberOfLines={1}>
-                  {item.authors?.join(', ') || 'Unknown author'}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-            </TouchableOpacity>
+            <View style={styles.bookItem}>
+              <BookCard book={item} />
+            </View>
           )}
         />
       )}
@@ -115,54 +106,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: FontSize.xl,
+    fontSize: FontSize.heading5,
     fontWeight: '700',
+    letterSpacing: -0.3,
   },
-  list: {
-    paddingHorizontal: Spacing.xl,
+  grid: {
+    paddingHorizontal: Spacing.xxl,
     paddingBottom: 100,
   },
-  historyItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.md,
-    borderRadius: BorderRadius.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
+  row: {
+    justifyContent: 'space-between',
   },
-  thumb: {
-    width: 48,
-    height: 64,
-    borderRadius: BorderRadius.sm,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.md,
-  },
-  historyInfo: {
-    flex: 1,
-  },
-  historyTitle: {
-    fontSize: FontSize.bodyMd,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  historyAuthor: {
-    fontSize: FontSize.bodySm,
+  bookItem: {
+    width: '48%',
+    marginBottom: Spacing.md,
   },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.xxl,
+    paddingHorizontal: Spacing.xxxl,
+  },
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.xxl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
   },
   emptyTitle: {
-    fontSize: FontSize.xl,
-    fontWeight: '600',
-    marginTop: Spacing.lg,
+    fontSize: FontSize.heading4,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+    marginBottom: Spacing.sm,
   },
   emptySubtitle: {
-    fontSize: FontSize.md,
-    marginTop: Spacing.sm,
+    fontSize: FontSize.bodyMd,
     textAlign: 'center',
+    lineHeight: 22,
   },
 });
