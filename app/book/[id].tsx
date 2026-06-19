@@ -12,7 +12,7 @@ import { getBookById } from '../../src/services/googleBooks';
 import { addBookToLibrary, isInLibrary, getNotesForBook, updateBookStatus, updateBookRating } from '../../src/services/books';
 
 import { Book, Note } from '../../src/types';
-import { Spacing, FontSize, BorderRadius } from '../../src/constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 const COVER_W = SCREEN_W * 0.38;
@@ -46,17 +46,16 @@ export default function BookDetailScreen() {
     if (!mountedRef.current) return;
     setBook(bookData);
     if (!user || !bookData) { if (mountedRef.current) setLoading(false); return; }
-    Promise.all([
+    const [inLib, bookNotes] = await Promise.all([
       isInLibrary(user.uid, id).catch(() => false),
       getNotesForBook(user.uid, id).catch(() => [] as Note[]),
-    ]).then(([inLib, bookNotes]) => {
-      if (mountedRef.current) {
-        setInLibrary(inLib);
-        if (inLib) { setBookStatus('want_to_read'); setUserRating(0); }
-        setNotes(bookNotes);
-      }
-    });
-    if (mountedRef.current) setLoading(false);
+    ]);
+    if (mountedRef.current) {
+      setInLibrary(inLib);
+      if (inLib) { setBookStatus('want_to_read'); setUserRating(0); }
+      setNotes(bookNotes);
+      setLoading(false);
+    }
   };
 
   const handleShare = () => {
@@ -185,7 +184,7 @@ export default function BookDetailScreen() {
         <View style={[styles.body, { paddingHorizontal: Spacing.xxl }]}>
           {/* Title + Author */}
           <Text style={[styles.bookTitle, { color: colors.textPrimary }]} numberOfLines={3}>{book.title}</Text>
-          <Text style={[styles.bookAuthor, { color: colors.coolSlate }]}>{book.authors.join(', ')}</Text>
+          <Text style={[styles.bookAuthor, { color: colors.textSecondary }]}>{book.authors.join(', ')}</Text>
 
           {/* Rating + info row */}
           <View style={styles.infoRow}>
@@ -197,26 +196,26 @@ export default function BookDetailScreen() {
             </View>
             {book.pageCount > 0 && (
               <View style={[styles.infoChip, { backgroundColor: colors.surfaceElevated }]}>
-                <Ionicons name="document-text-outline" size={14} color={colors.coolSlate} />
+                <Ionicons name="document-text-outline" size={14} color={colors.textSecondary} />
                 <Text style={[styles.infoChipText, { color: colors.textPrimary }]}>{book.pageCount} pages</Text>
               </View>
             )}
             {book.publishedDate && book.publishedDate !== 'N/A' && (
               <View style={[styles.infoChip, { backgroundColor: colors.surfaceElevated }]}>
-                <Ionicons name="calendar-outline" size={14} color={colors.coolSlate} />
+                <Ionicons name="calendar-outline" size={14} color={colors.textSecondary} />
                 <Text style={[styles.infoChipText, { color: colors.textPrimary }]}>{book.publishedDate}</Text>
               </View>
             )}
             {isPdfBook && (
               <View style={[styles.infoChip, { backgroundColor: colors.surfaceElevated }]}>
-                <Ionicons name="arrow-down-outline" size={14} color={colors.coolSlate} />
-                <Text style={[styles.infoChipText, { color: colors.coolSlate }]}>Download Only</Text>
+                <Ionicons name="arrow-down-outline" size={14} color={colors.textSecondary} />
+                <Text style={[styles.infoChipText, { color: colors.textSecondary }]}>Download Only</Text>
               </View>
             )}
             {hasDriveLink && (
-              <View style={[styles.infoChip, { backgroundColor: 'rgba(76, 175, 80, 0.15)' }]}>
-                <Ionicons name="cloud-download-outline" size={14} color={colors.success} />
-                <Text style={[styles.infoChipText, { color: colors.success }]}>Free</Text>
+              <View style={[styles.infoChip, { backgroundColor: colors.accentSoft }]}>
+                <Ionicons name="cloud-download-outline" size={14} color={colors.accent} />
+                <Text style={[styles.infoChipText, { color: colors.accent }]}>Free</Text>
               </View>
             )}
           </View>
@@ -249,7 +248,7 @@ export default function BookDetailScreen() {
           {/* Rating picker */}
           {inLibrary && (
             <View style={styles.ratingSection}>
-              <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>Your Rating</Text>
+              <Text style={[styles.sectionLabel, { color: colors.textTertiary }]}>Your Rating</Text>
               <View style={styles.starsRow}>
                 {[1, 2, 3, 4, 5].map(s => (
                   <TouchableOpacity key={s} onPress={() => handleRatingChange(s)} style={styles.starBtn}>
@@ -263,7 +262,7 @@ export default function BookDetailScreen() {
           {/* Status picker */}
           {inLibrary && (
             <View style={styles.statusSection}>
-              <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>Status</Text>
+              <Text style={[styles.sectionLabel, { color: colors.textTertiary }]}>Status</Text>
               <View style={styles.statusRow}>
                 {STATUS_OPTIONS.map(s => (
                   <TouchableOpacity
@@ -333,33 +332,33 @@ const styles = StyleSheet.create({
   heroContent: { alignItems: 'center', paddingBottom: Spacing.xl },
   coverShadow: {
     width: COVER_W, height: COVER_H, borderRadius: BorderRadius.lg, overflow: 'hidden',
-    elevation: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16,
+    ...Shadows.elevated,
   },
   cover: { width: '100%', height: '100%', resizeMode: 'cover' },
   coverPlaceholder: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
-  coverLetter: { fontSize: FontSize.heroDisplay, fontWeight: '800' },
+  coverLetter: { fontSize: FontSize.heroDisplay, fontWeight: FontWeight.extrabold },
   body: { paddingTop: Spacing.md },
-  bookTitle: { fontSize: FontSize.heading2, fontWeight: '800', lineHeight: 34, letterSpacing: -0.5, marginBottom: Spacing.xs },
-  bookAuthor: { fontSize: FontSize.bodyMd, fontWeight: '500', marginBottom: Spacing.lg },
+  bookTitle: { fontSize: FontSize.heading2, fontWeight: FontWeight.extrabold, lineHeight: 34, letterSpacing: -0.5, marginBottom: Spacing.xs },
+  bookAuthor: { fontSize: FontSize.bodyMd, fontWeight: FontWeight.medium, marginBottom: Spacing.lg },
   infoRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm, marginBottom: Spacing.xl },
   infoChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
-  infoChipText: { fontSize: FontSize.xs, fontWeight: '600' },
+  infoChipText: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold },
   actionRow: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.md },
   readBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingVertical: Spacing.md + 4, borderRadius: BorderRadius.lg },
-  readBtnText: { fontSize: FontSize.bodyMd, fontWeight: '700' },
+  readBtnText: { fontSize: FontSize.bodyMd, fontWeight: FontWeight.bold },
   downloadBtn: { width: 50, height: 50, borderRadius: BorderRadius.lg, justifyContent: 'center', alignItems: 'center', borderWidth: 1 },
   libraryBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingVertical: Spacing.md, borderRadius: BorderRadius.lg, borderWidth: 1, marginBottom: Spacing.sm },
-  libraryBtnText: { fontSize: FontSize.bodyMd, fontWeight: '600' },
+  libraryBtnText: { fontSize: FontSize.bodyMd, fontWeight: FontWeight.semibold },
   ratingSection: { marginBottom: Spacing.lg },
-  sectionLabel: { fontSize: FontSize.xs, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginBottom: Spacing.sm },
+  sectionLabel: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, textTransform: 'uppercase', letterSpacing: 1, marginBottom: Spacing.sm },
   starsRow: { flexDirection: 'row', gap: Spacing.md },
   starBtn: { padding: 2 },
   statusSection: { marginBottom: Spacing.xl },
   statusRow: { flexDirection: 'row', gap: Spacing.sm },
   statusChip: { flex: 1, paddingVertical: Spacing.sm + 2, borderRadius: BorderRadius.md, alignItems: 'center', borderWidth: 1 },
-  statusChipText: { fontSize: FontSize.sm, fontWeight: '600' },
+  statusChipText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold },
   section: { marginBottom: Spacing.xl },
-  sectionTitle: { fontSize: FontSize.heading5, fontWeight: '700', marginBottom: Spacing.md },
+  sectionTitle: { fontSize: FontSize.heading5, fontWeight: FontWeight.bold, marginBottom: Spacing.md },
   description: { fontSize: FontSize.bodyMd, lineHeight: 24 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   tag: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full, borderWidth: 1 },
