@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
-import { Spacing, FontSize, BorderRadius } from '../../src/constants/theme';
+import { Spacing, FontSize, BorderRadius, Shadows } from '../../src/constants/theme';
 import { useTheme } from '../../src/context/ThemeContext';
 import { clearUserLibrary } from '../../src/services/localDb';
 import { RequestBookModal } from '../../src/components/RequestBookModal';
@@ -67,7 +67,7 @@ export default function ProfileScreen() {
 
         {user ? (
           <>
-            <View style={[styles.userCard, { backgroundColor: colors.surfaceElevated }]}>
+            <View style={[styles.userCard, { backgroundColor: colors.surface }, Shadows.elevated]}>
               <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
                 <Text style={[styles.avatarText, { color: colors.onPrimary }]}>
                   {user.displayName?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || 'U'}
@@ -85,12 +85,12 @@ export default function ProfileScreen() {
 
             {menuSections.map((section, sIdx) => (
               <View key={sIdx} style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{section.title}</Text>
-                <View style={[styles.sectionCard, { backgroundColor: colors.surfaceElevated }]}>
+                <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>{section.title}</Text>
+                <View style={[styles.sectionCard, { backgroundColor: colors.surface }, Shadows.card]}>
                   {section.items.map((item, iIdx) => (
                     <TouchableOpacity
                       key={iIdx}
-                      style={[styles.menuItem, iIdx < section.items.length - 1 && { borderBottomColor: colors.border, borderBottomWidth: 1 }]}
+                      style={[styles.menuItem, iIdx < section.items.length - 1 && { borderBottomColor: colors.borderLight, borderBottomWidth: StyleSheet.hairlineWidth }]}
                       onPress={() => { if (item.action) item.action(); else if (item.route) router.push(item.route as any); }}
                       activeOpacity={0.6}
                     >
@@ -98,7 +98,7 @@ export default function ProfileScreen() {
                         <Ionicons name={item.icon as any} size={20} color={colors.textSecondary} />
                         <Text style={[styles.menuLabel, { color: colors.textPrimary }]}>{item.label}</Text>
                       </View>
-                      <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+                      <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -106,7 +106,7 @@ export default function ProfileScreen() {
             ))}
 
             <TouchableOpacity
-              style={[styles.menuItem, { backgroundColor: colors.surfaceElevated, marginHorizontal: Spacing.xl, borderRadius: BorderRadius.lg, marginBottom: Spacing.md }]}
+              style={[styles.menuItem, { backgroundColor: colors.surface, marginHorizontal: Spacing.xxl, borderRadius: BorderRadius.lg, marginBottom: Spacing.md }, Shadows.card]}
               onPress={handleClearHistory}
               activeOpacity={0.7}
             >
@@ -117,7 +117,7 @@ export default function ProfileScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.logoutBtn, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}
+              style={[styles.logoutBtn, { backgroundColor: colors.surface, borderColor: colors.borderLight }]}
               onPress={() => Alert.alert('Log Out', 'Are you sure you want to log out?', [
                 { text: 'Cancel', style: 'cancel' },
                 { text: 'Log Out', style: 'destructive', onPress: signOut },
@@ -130,7 +130,7 @@ export default function ProfileScreen() {
           </>
         ) : (
           <View style={styles.guestWrap}>
-            <View style={[styles.guestAvatar, { backgroundColor: colors.surfaceElevated }]}>
+            <View style={[styles.guestAvatar, { backgroundColor: colors.surface }]}>
               <Ionicons name="person-outline" size={40} color={colors.textMuted} />
             </View>
             <Text style={[styles.guestTitle, { color: colors.textPrimary }]}>Guest Mode</Text>
@@ -147,7 +147,7 @@ export default function ProfileScreen() {
       </ScrollView>
       {!user && (
         <TouchableOpacity
-          style={[styles.guestRequestBtn, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}
+          style={[styles.guestRequestBtn, { backgroundColor: colors.surface, borderColor: colors.borderLight }]}
           onPress={() => setShowRequest(true)}
           activeOpacity={0.7}
         >
@@ -163,8 +163,8 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
-  headerTitle: { fontSize: FontSize.heading4, fontWeight: '700', letterSpacing: -0.3, paddingHorizontal: Spacing.xxl, marginBottom: Spacing.xl },
-  userCard: { flexDirection: 'row', alignItems: 'center', marginHorizontal: Spacing.xxl, padding: Spacing.lg, borderRadius: BorderRadius.lg, marginBottom: Spacing.xxl, gap: Spacing.md },
+  headerTitle: { fontSize: FontSize.heading1, fontWeight: '800', letterSpacing: -1, paddingHorizontal: Spacing.xxl, marginBottom: Spacing.xl },
+  userCard: { flexDirection: 'row', alignItems: 'center', marginHorizontal: Spacing.xxl, padding: Spacing.lg, borderRadius: BorderRadius.xl, marginBottom: Spacing.xxl, gap: Spacing.md },
   avatar: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center' },
   avatarText: { fontSize: FontSize.xxl, fontWeight: '700' },
   userInfo: { flex: 1 },
