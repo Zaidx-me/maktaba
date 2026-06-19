@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { BookCard } from './BookCard';
+import { SectionHeader } from './SectionHeader';
 import { SkeletonRow } from './SkeletonLoader';
 import { Book } from '../types';
-import { Spacing, FontSize } from '../constants/theme';
+import { Spacing } from '../constants/theme';
 import { useTheme } from '../context/ThemeContext';
 
 interface BookRowProps {
   title: string;
+  label?: string;
   books: Book[];
   loading?: boolean;
   bookSize?: number;
@@ -30,15 +32,13 @@ function areRowPropsEqual(prev: BookRowProps, next: BookRowProps) {
     && areBooksEqual(prev.books, next.books);
 }
 
-export const BookRow = React.memo(function BookRow({ title, books, loading, bookSize = 130, onSeeAll }: BookRowProps) {
+export const BookRow = React.memo(function BookRow({ title, label, books, loading, bookSize = 140, onSeeAll }: BookRowProps) {
   const { colors } = useTheme();
 
   if (loading) {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
-        </View>
+        <SectionHeader label={label} title={title} />
         <SkeletonRow />
       </View>
     );
@@ -48,14 +48,7 @@ export const BookRow = React.memo(function BookRow({ title, books, loading, book
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
-        {onSeeAll && (
-          <TouchableOpacity onPress={onSeeAll}>
-            <Text style={[styles.seeAll, { color: colors.textSecondary }]}>See all</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <SectionHeader label={label} title={title} onSeeAll={onSeeAll} />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -73,29 +66,12 @@ export const BookRow = React.memo(function BookRow({ title, books, loading, book
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.xl,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-    paddingHorizontal: Spacing.xxl,
-  },
-  title: {
-    fontSize: FontSize.heading4,
-    fontWeight: '700',
-    letterSpacing: -0.3,
-  },
-  seeAll: {
-    fontSize: FontSize.bodySm,
-    fontWeight: '400',
+    marginBottom: Spacing.xxl,
   },
   scrollContent: {
-    paddingHorizontal: Spacing.xxl,
-    gap: Spacing.sm,
+    gap: Spacing.md,
   },
   bookWrapper: {
-    marginRight: Spacing.xs,
+    marginRight: Spacing.sm,
   },
 });
