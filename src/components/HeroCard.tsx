@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
-import { Spacing, FontSize, BorderRadius } from '../constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius } from '../constants/theme';
 
 interface HeroCardProps {
   label?: string;
@@ -9,38 +9,26 @@ interface HeroCardProps {
   description?: string;
   bookCount?: number;
   onPress?: () => void;
-  gradient?: [string, string];
 }
 
-export function HeroCard({
-  label = 'FEATURED COLLECTION',
-  title,
-  description,
-  bookCount,
-  onPress,
-  gradient = ['#1a1a2e', '#0f3460'],
-}: HeroCardProps) {
+export function HeroCard({ label, title, description, bookCount, onPress }: HeroCardProps) {
   const { colors } = useTheme();
 
   return (
     <TouchableOpacity
-      style={[styles.container, { backgroundColor: gradient[0] }]}
+      style={[styles.container, { backgroundColor: colors.accent }]}
       onPress={onPress}
-      activeOpacity={0.9}
+      activeOpacity={0.85}
     >
-      <View style={[styles.gradientOverlay, { backgroundColor: gradient[1] }]} />
-      <View style={[styles.glow, { backgroundColor: colors.accent + '30' }]} />
-      
       <View style={styles.content}>
-        <Text style={styles.label}>{label}</Text>
+        {label && <Text style={styles.label}>{label}</Text>}
         <Text style={styles.title}>{title}</Text>
         {description && <Text style={styles.description}>{description}</Text>}
-        
         <View style={styles.footer}>
           <View style={styles.ctaButton}>
             <Text style={styles.ctaText}>Explore</Text>
           </View>
-          {bookCount && (
+          {bookCount !== undefined && (
             <Text style={styles.bookCount}>{bookCount} books</Text>
           )}
         </View>
@@ -51,71 +39,53 @@ export function HeroCard({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: BorderRadius.xxl,
+    borderRadius: BorderRadius.xl,
     overflow: 'hidden',
-    minHeight: 200,
-  },
-  gradientOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    opacity: 0.5,
-  },
-  glow: {
-    position: 'absolute',
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    top: -30,
-    right: -20,
-    opacity: 0.3,
+    minHeight: 160,
   },
   content: {
     padding: Spacing.xxl,
-    position: 'relative',
-    zIndex: 1,
   },
   label: {
     fontSize: FontSize.xs,
-    fontWeight: '600',
-    color: 'rgba(255,255,255,0.6)',
+    fontWeight: FontWeight.semibold,
+    color: 'rgba(255,255,255,0.7)',
     textTransform: 'uppercase',
-    letterSpacing: 2,
-    marginBottom: Spacing.md,
+    letterSpacing: 0.5,
+    marginBottom: Spacing.sm,
   },
   title: {
-    fontSize: FontSize.heading3,
-    fontWeight: '700',
+    fontSize: FontSize.heading2,
+    fontWeight: FontWeight.bold,
     color: '#fff',
     letterSpacing: -0.5,
-    lineHeight: 28,
+    lineHeight: 32,
     marginBottom: Spacing.sm,
   },
   description: {
     fontSize: FontSize.bodyMd,
-    color: 'rgba(255,255,255,0.7)',
-    lineHeight: 22,
-    maxWidth: 280,
+    color: 'rgba(255,255,255,0.8)',
+    lineHeight: 20,
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
-    marginTop: Spacing.xl,
+    marginTop: Spacing.lg,
   },
   ctaButton: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.sm,
   },
   ctaText: {
     color: '#fff',
     fontSize: FontSize.bodyMd,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
   },
   bookCount: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: FontSize.bodySm,
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: FontSize.sm,
   },
 });

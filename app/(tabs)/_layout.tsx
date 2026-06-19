@@ -15,25 +15,12 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          position: 'absolute' as const,
-          bottom: 16,
-          left: 16,
-          right: 16,
-          height: 64 + bottomPadding,
-          paddingTop: 10,
-          paddingBottom: bottomPadding,
           backgroundColor: colors.glass,
-          borderRadius: 24,
-          borderWidth: 0.5,
-          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-          elevation: 0,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: isDark ? 0.3 : 0.12,
-          shadowRadius: 32,
-          // @ts-ignore
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          borderTopColor: colors.separator,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          height: 50 + bottomPadding,
+          paddingBottom: bottomPadding,
+          paddingTop: 6,
         },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
@@ -87,7 +74,6 @@ export default function TabsLayout() {
 const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 10,
-    fontWeight: '600',
-    letterSpacing: 0.2,
+    fontWeight: '500',
   },
 });

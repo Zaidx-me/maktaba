@@ -11,12 +11,12 @@ interface SearchBarProps {
   onSubmitEditing?: () => void;
 }
 
-export function SearchBar({ value, onChangeText, placeholder = 'Search books, authors...', onSubmitEditing }: SearchBarProps) {
+export function SearchBar({ value, onChangeText, placeholder = 'Search', onSubmitEditing }: SearchBarProps) {
   const { colors } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.inputBg }]}>
-      <Ionicons name="search" size={18} color={colors.textMuted} />
+      <Ionicons name="search" size={16} color={colors.textMuted} />
       <TextInput
         style={[styles.input, { color: colors.textPrimary }]}
         placeholder={placeholder}
@@ -28,7 +28,7 @@ export function SearchBar({ value, onChangeText, placeholder = 'Search books, au
       />
       {value.length > 0 && (
         <TouchableOpacity onPress={() => onChangeText('')} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <Ionicons name="close-circle" size={18} color={colors.textMuted} />
+          <Ionicons name="close-circle" size={16} color={colors.textMuted} />
         </TouchableOpacity>
       )}
     </View>
@@ -39,13 +39,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
+    gap: Spacing.sm,
     borderRadius: BorderRadius.sm,
-    paddingHorizontal: Spacing.lg,
-    height: 48,
+    paddingHorizontal: Spacing.md,
+    height: 36,
   },
   input: {
     flex: 1,
-    fontSize: FontSize.bodyMdMedium,
+    fontSize: FontSize.bodyMd,
   },
 });

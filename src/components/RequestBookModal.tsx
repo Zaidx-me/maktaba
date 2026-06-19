@@ -60,7 +60,7 @@ export function RequestBookModal({ visible, onClose, prefilledTitle }: Props) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.overlay}>
-        <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={handleClose}>
+        <TouchableOpacity style={[styles.overlay, { backgroundColor: colors.overlay }]} activeOpacity={1} onPress={handleClose}>
           <TouchableOpacity activeOpacity={1} onPress={() => {}} style={[styles.modal, { backgroundColor: colors.surface }]}>
             <View style={[styles.handle, { backgroundColor: colors.textMuted }]} />
 
@@ -120,7 +120,7 @@ export function RequestBookModal({ visible, onClose, prefilledTitle }: Props) {
 }
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' },
+  overlay: { flex: 1, justifyContent: 'flex-end' },
   modal: {
     borderTopLeftRadius: BorderRadius.xxl,
     borderTopRightRadius: BorderRadius.xxl,

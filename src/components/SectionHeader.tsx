@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
-import { Spacing, FontSize } from '../constants/theme';
+import { Spacing, FontSize, FontWeight } from '../constants/theme';
 
 interface SectionHeaderProps {
   label?: string;
@@ -10,7 +10,7 @@ interface SectionHeaderProps {
   onSeeAll?: () => void;
 }
 
-export function SectionHeader({ label, title, seeAllText = 'See all', onSeeAll }: SectionHeaderProps) {
+export function SectionHeader({ label, title, seeAllText = 'See All', onSeeAll }: SectionHeaderProps) {
   const { colors } = useTheme();
 
   return (
@@ -39,18 +39,18 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: FontSize.xs,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
     textTransform: 'uppercase',
-    letterSpacing: 1.5,
-    marginBottom: Spacing.xs,
+    letterSpacing: 0.5,
+    marginBottom: Spacing.xxs,
   },
   title: {
     fontSize: FontSize.heading3,
-    fontWeight: '700',
+    fontWeight: FontWeight.bold,
     letterSpacing: -0.3,
   },
   seeAll: {
     fontSize: FontSize.bodyMd,
-    fontWeight: '500',
+    fontWeight: FontWeight.medium,
   },
 });

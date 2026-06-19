@@ -4,7 +4,7 @@ import { AuthProvider } from '../src/context/AuthContext';
 import { ThemeProvider, useTheme } from '../src/context/ThemeContext';
 
 function RootLayoutInner() {
-  const { isDark } = useTheme();
+  const { isDark, colors } = useTheme();
 
   return (
     <>
@@ -12,7 +12,7 @@ function RootLayoutInner() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: isDark ? '#0a0a0a' : '#ffffff' },
+          contentStyle: { backgroundColor: colors.background },
           animation: 'fade',
         }}
       />

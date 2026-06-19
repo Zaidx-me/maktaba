@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
-import { Spacing, FontSize, BorderRadius, Shadows } from '../../src/constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
 import { useTheme } from '../../src/context/ThemeContext';
 import { clearUserLibrary } from '../../src/services/localDb';
 import { RequestBookModal } from '../../src/components/RequestBookModal';
@@ -58,7 +58,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.groupedBackground }]}>
       <ScrollView
         contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + Spacing.xl }]}
         showsVerticalScrollIndicator={false}
@@ -163,7 +163,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
-  headerTitle: { fontSize: FontSize.heading1, fontWeight: '800', letterSpacing: -1, paddingHorizontal: Spacing.xxl, marginBottom: Spacing.xl },
+  headerTitle: { fontSize: 34, fontWeight: FontWeight.bold, letterSpacing: -0.5, paddingHorizontal: Spacing.xxl, marginBottom: Spacing.xl },
   userCard: { flexDirection: 'row', alignItems: 'center', marginHorizontal: Spacing.xxl, padding: Spacing.lg, borderRadius: BorderRadius.xl, marginBottom: Spacing.xxl, gap: Spacing.md },
   avatar: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center' },
   avatarText: { fontSize: FontSize.xxl, fontWeight: '700' },

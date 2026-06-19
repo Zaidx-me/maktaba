@@ -32,7 +32,7 @@ function areRowPropsEqual(prev: BookRowProps, next: BookRowProps) {
     && areBooksEqual(prev.books, next.books);
 }
 
-export const BookRow = React.memo(function BookRow({ title, label, books, loading, bookSize = 140, onSeeAll }: BookRowProps) {
+export const BookRow = React.memo(function BookRow({ title, label, books, loading, bookSize = 120, onSeeAll }: BookRowProps) {
   if (loading) {
     return (
       <View style={styles.container}>
@@ -46,7 +46,9 @@ export const BookRow = React.memo(function BookRow({ title, label, books, loadin
 
   return (
     <View style={styles.container}>
-      <SectionHeader label={label} title={title} onSeeAll={onSeeAll} />
+      <View style={styles.headerPadding}>
+        <SectionHeader label={label} title={title} onSeeAll={onSeeAll} />
+      </View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -64,12 +66,17 @@ export const BookRow = React.memo(function BookRow({ title, label, books, loadin
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.xxl,
+    marginBottom: Spacing.xxxl,
+  },
+  headerPadding: {
+    paddingHorizontal: Spacing.xxl,
   },
   scrollContent: {
+    paddingLeft: Spacing.xxl,
+    paddingRight: Spacing.sm,
     gap: Spacing.md,
   },
   bookWrapper: {
-    marginRight: Spacing.sm,
+    marginRight: 0,
   },
 });

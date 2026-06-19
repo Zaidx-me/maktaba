@@ -239,8 +239,8 @@ export default function BookDetailScreen() {
             onPress={handleAddToLibrary}
             activeOpacity={0.7}
           >
-            <Ionicons name={inLibrary ? 'heart' : 'heart-outline'} size={18} color={inLibrary ? '#fff' : colors.textPrimary} />
-            <Text style={[styles.libraryBtnText, { color: inLibrary ? '#fff' : colors.textPrimary }]}>
+            <Ionicons name={inLibrary ? 'heart' : 'heart-outline'} size={18} color={inLibrary ? colors.white : colors.textPrimary} />
+            <Text style={[styles.libraryBtnText, { color: inLibrary ? colors.white : colors.textPrimary }]}>
               {inLibrary ? 'In Favourites' : 'Add to Favourite'}
             </Text>
           </TouchableOpacity>

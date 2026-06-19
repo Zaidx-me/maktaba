@@ -50,8 +50,8 @@ function SwipeableNotif({ notif, onDismiss, colors }: { notif: Notification; onD
   return (
     <Animated.View style={[styles.notifAnimated, { opacity, transform: [{ translateX }] }]}>
       <View style={[styles.deleteBg, { backgroundColor: colors.error }]}>
-        <Ionicons name="trash-outline" size={18} color="#fff" />
-        <Text style={[styles.deleteText, { color: '#fff' }]}>Dismiss</Text>
+        <Ionicons name="trash-outline" size={18} color={colors.white} />
+        <Text style={[styles.deleteText, { color: colors.white }]}>Dismiss</Text>
       </View>
       <Animated.View {...panResponder.panHandlers} style={[styles.notifCard, {
         backgroundColor: colors.surfaceElevated,

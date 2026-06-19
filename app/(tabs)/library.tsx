@@ -12,7 +12,7 @@ import { useTheme } from '../../src/context/ThemeContext';
 import { Book } from '../../src/types';
 import { getAllUrduBooks } from '../../src/services/urduBooks';
 import { getAllPdfBooks } from '../../src/services/pdfBooksFree';
-import { Spacing, FontSize, BorderRadius } from '../../src/constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius } from '../../src/constants/theme';
 import { BookCoverPlaceholder } from '../../src/components/BookCoverPlaceholder';
 import { useRouter } from 'expo-router';
 import { Image } from 'react-native';
@@ -127,7 +127,7 @@ export default function LibraryScreen() {
       <View style={[styles.headerRow, { paddingHorizontal: Spacing.xxl }]}>
         <View>
           <Text style={[styles.title, { color: colors.textPrimary }]}>Library</Text>
-          <Text style={[styles.subtitle, { color: colors.textMuted }]}>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             {filteredBooks.length.toLocaleString()} books
           </Text>
         </View>
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'flex-end', marginBottom: Spacing.md,
   },
-  title: { fontSize: FontSize.heading1, fontWeight: '800', letterSpacing: -1 },
+  title: { fontSize: 34, fontWeight: FontWeight.bold, letterSpacing: -0.5 },
   subtitle: { fontSize: FontSize.sm, marginTop: 2 },
 
   gridRow: {

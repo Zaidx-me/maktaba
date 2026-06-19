@@ -9,16 +9,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { BookRow } from '../../src/components/BookRow';
 import { SkeletonRow } from '../../src/components/SkeletonLoader';
 import { RequestBookModal } from '../../src/components/RequestBookModal';
-import { HeroCard } from '../../src/components/HeroCard';
-import { QuickActionCard } from '../../src/components/QuickActionCard';
-import { SearchBar } from '../../src/components/SearchBar';
 import { ProgressBar } from '../../src/components/ProgressBar';
 import { Book } from '../../src/types';
 import { useTheme } from '../../src/context/ThemeContext';
 import { getCachedBooks, preloadBooks } from '../../src/services/bookCache';
 import { getAllUrduBooks, getUrduBooksByCategory } from '../../src/services/urduBooks';
 import { getAllPdfBooks } from '../../src/services/pdfBooksFree';
-import { Spacing, FontSize, BorderRadius, Shadows } from '../../src/constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
 import { getDismissedNotifications } from '../../src/services/localDb';
 import { searchBooks } from '../../src/services/googleBooks';
 
@@ -177,150 +174,206 @@ export default function HomeScreen() {
 
   const isEmpty = !state.heroBooks.length && !state.famousBooks.length && !state.trendingBooks.length;
 
-  const continueReadingBooks = useMemo(() => {
-    return state.famousBooks.slice(0, 3).map((book, i) => ({
-      ...book,
-      progress: [0.35, 0.62, 0.18][i] || 0.1,
-    }));
-  }, [state.famousBooks]);
+  const featuredBook = state.heroBooks[0];
 
   return (
-    <View style={[s.container, { backgroundColor: colors.background }]}>
+    <View style={[s.container, { backgroundColor: colors.groupedBackground }]}>
       <ScrollView
         ref={scrollRef}
-        contentContainerStyle={[s.scrollContent, { paddingTop: insets.top + Spacing.md }]}
-        refreshControl={<RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} tintColor={colors.textSecondary} />}
+        contentContainerStyle={[s.scrollContent, { paddingTop: insets.top }]}
+        refreshControl={<RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
         showsVerticalScrollIndicator={false}
       >
+        {/* Header */}
         <View style={[s.header, { paddingHorizontal: Spacing.xxl }]}>
-          <View>
-            <Text style={[s.headerTitle, { color: colors.textPrimary }]}>Discover</Text>
-            <Text style={[s.headerSub, { color: colors.textMuted }]}>Find your next great read</Text>
+          <Text style={[s.headerTitle, { color: colors.textPrimary }]}>Home</Text>
+          <View style={s.headerActions}>
+            <TouchableOpacity onPress={() => router.push('/notifications')} style={[s.iconBtn, { backgroundColor: colors.surface }]}>
+              <Ionicons name="notifications-outline" size={20} color={colors.textPrimary} />
+              {state.hasUnread && <View style={[s.notifDot, { backgroundColor: colors.error }]} />}
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => router.push('/notifications')} style={s.notifBtn}>
-            <Ionicons name="notifications-outline" size={22} color={colors.textPrimary} />
-            {state.hasUnread && <View style={[s.notifDot, { backgroundColor: colors.error }]} />}
-          </TouchableOpacity>
         </View>
 
-        <View style={{ paddingHorizontal: Spacing.xxl, marginBottom: Spacing.lg }}>
-          <SearchBar
-            value={query}
-            onChangeText={setQuery}
-            onSubmitEditing={handleSearch}
-          />
-        </View>
+        {/* Search Bar */}
+        <TouchableOpacity
+          style={[s.searchBar, { backgroundColor: colors.surface, borderColor: colors.separator }]}
+          onPress={() => router.push('/(tabs)/search')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="search" size={18} color={colors.textMuted} />
+          <Text style={[s.searchPlaceholder, { color: colors.textMuted }]}>Search</Text>
+        </TouchableOpacity>
 
         {state.loading ? (
-          <>
-            <View style={{ height: 200, marginHorizontal: Spacing.xxl, marginBottom: Spacing.xl, borderRadius: BorderRadius.xxl, backgroundColor: colors.surfaceElevated }} />
+          <View style={{ paddingHorizontal: Spacing.xxl }}>
             <SkeletonRow />
             <SkeletonRow />
             <SkeletonRow />
-          </>
+          </View>
         ) : (
           <Animated.View style={{ opacity: fadeAnim }}>
-            {state.heroBooks.length > 0 && (
-              <View style={{ marginBottom: Spacing.xl }}>
-                <HeroCard
-                  label="FEATURED COLLECTION"
-                  title="Explore 3000+ Books"
-                  description="Urdu novels, Islamic books, PDFs and more"
-                  bookCount={state.heroBooks.length}
-                  onPress={() => router.push('/(tabs)/library')}
-                />
+            {/* Continue Reading / Featured */}
+            {featuredBook && (
+              <View style={s.section}>
+                <View style={[s.sectionHeader, { paddingHorizontal: Spacing.xxl }]}>
+                  <Text style={[s.sectionTitle, { color: colors.textPrimary }]}>Continue Reading</Text>
+                  <TouchableOpacity onPress={() => router.push('/(tabs)/library')}>
+                    <Text style={[s.seeAll, { color: colors.accent }]}>See All</Text>
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                  style={[s.featuredCard, { backgroundColor: colors.surface, marginHorizontal: Spacing.xxl }, Shadows.card]}
+                  onPress={() => router.push(`/book/${featuredBook.id}`)}
+                  activeOpacity={0.7}
+                >
+                  <Image source={{ uri: featuredBook.thumbnail }} style={s.featuredImage} />
+                  <View style={s.featuredInfo}>
+                    <Text style={[s.featuredTitle, { color: colors.textPrimary }]} numberOfLines={2}>
+                      {featuredBook.title}
+                    </Text>
+                    {featuredBook.authors?.[0] && (
+                      <Text style={[s.featuredAuthor, { color: colors.textSecondary }]} numberOfLines={1}>
+                        {featuredBook.authors[0]}
+                      </Text>
+                    )}
+                    <View style={s.featuredProgress}>
+                      <ProgressBar progress={0.35} height={3} />
+                      <Text style={[s.progressText, { color: colors.textMuted }]}>35%</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
               </View>
             )}
 
-            {continueReadingBooks.length > 0 && (
-              <View style={[s.section, { paddingHorizontal: Spacing.xxl }]}>
-                <Text style={[s.sectionLabel, { color: colors.textSecondary }]}>CONTINUE READING</Text>
-                <Text style={[s.sectionTitle, { color: colors.textPrimary }]}>Pick up where you left off</Text>
-                <View style={s.continueReadingList}>
-                  {continueReadingBooks.map((book) => (
-                    <TouchableOpacity
-                      key={book.id}
-                      style={[s.continueCard, { backgroundColor: colors.surfaceElevated }]}
-                      onPress={() => router.push(`/book/${book.id}`)}
-                      activeOpacity={0.7}
-                    >
-                      <Image source={{ uri: book.thumbnail }} style={s.continueCover} />
-                      <View style={s.continueInfo}>
-                        <Text style={[s.continueTitle, { color: colors.textPrimary }]} numberOfLines={1}>
-                          {book.title}
-                        </Text>
-                        {book.authors?.length > 0 && (
-                          <Text style={[s.continueAuthor, { color: colors.textSecondary }]} numberOfLines={1}>
-                            {book.authors[0]}
-                          </Text>
-                        )}
-                        <ProgressBar progress={book.progress} height={3} />
-                      </View>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
+            {/* Top Picks */}
+            {state.famousBooks.length > 0 && (
+              <BookRow
+                title="Top Picks"
+                label="FOR YOU"
+                books={state.famousBooks}
+                bookSize={120}
+                onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'famous', title: 'Top Picks', query: 'famous classic books' } })}
+              />
             )}
+
+            {/* Trending Now */}
+            {state.trendingBooks.length > 0 && (
+              <BookRow
+                title="Trending Now"
+                books={state.trendingBooks}
+                bookSize={120}
+                onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'trending_now', title: 'Trending Now', query: 'trending now 2025' } })}
+              />
+            )}
+
+            {/* Categories Section */}
+            <View style={s.section}>
+              <View style={[s.sectionHeader, { paddingHorizontal: Spacing.xxl }]}>
+                <Text style={[s.sectionTitle, { color: colors.textPrimary }]}>Browse Categories</Text>
+              </View>
+              <View style={[s.categoriesGrid, { paddingHorizontal: Spacing.xxl }]}>
+                {[
+                  { icon: 'book-outline', label: 'Islamic', color: colors.accent },
+                  { icon: 'library-outline', label: 'Novels', color: colors.warning },
+                  { icon: 'time-outline', label: 'History', color: colors.success },
+                  { icon: 'musical-notes-outline', label: 'Poetry', color: '#FF6B6B' },
+                ].map((cat) => (
+                  <TouchableOpacity
+                    key={cat.label}
+                    style={[s.categoryChip, { backgroundColor: colors.surface }]}
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      const queryMap: Record<string, string> = {
+                        Islamic: 'Islamic books',
+                        Novels: 'Urdu novels',
+                        History: 'history biography',
+                        Poetry: 'poetry literature',
+                      };
+                      const catMap: Record<string, string> = {
+                        Islamic: 'islamic',
+                        Novels: 'urdu_novels',
+                        History: 'history',
+                        Poetry: 'poetry',
+                      };
+                      router.push({ pathname: '/shelf/[category]', params: { category: catMap[cat.label], title: cat.label, query: queryMap[cat.label] } });
+                    }}
+                  >
+                    <View style={[s.categoryIcon, { backgroundColor: cat.color + '18' }]}>
+                      <Ionicons name={cat.icon as any} size={20} color={cat.color} />
+                    </View>
+                    <Text style={[s.categoryLabel, { color: colors.textPrimary }]}>{cat.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
 
             {isEmpty && (
               <View style={s.emptyState}>
                 <Ionicons name="book-outline" size={48} color={colors.textMuted} />
-                <Text style={[s.emptyTitle, { color: colors.textMuted }]}>Loading books...</Text>
-                <Text style={[s.emptySub, { color: colors.textMuted }]}>Pull down to refresh</Text>
+                <Text style={[s.emptyTitle, { color: colors.textPrimary }]}>No books found</Text>
+                <Text style={[s.emptySub, { color: colors.textSecondary }]}>Pull down to refresh</Text>
               </View>
             )}
 
-            {state.famousBooks.length > 0 && (
-              <BookRow title="Most Famous Books" label="POPULAR" books={state.famousBooks} bookSize={140} onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'famous', title: 'Most Famous Books', query: 'famous classic books' } })} />
-            )}
-
-            <View style={[s.quickActions, { paddingHorizontal: Spacing.xxl }]}>
-              <QuickActionCard
-                icon="library-outline"
-                title="Library"
-                subtitle="Your books"
-                onPress={() => router.push('/(tabs)/library')}
-              />
-              <QuickActionCard
-                icon="add-circle-outline"
-                title="Request"
-                subtitle="New book"
-                onPress={() => setShowRequest(true)}
-              />
-              <QuickActionCard
-                icon="heart-outline"
-                title="Favorites"
-                subtitle="Saved"
-                onPress={() => router.push('/favorites')}
-              />
-            </View>
-
+            {/* Islamic Books */}
             {state.islamicBooks.length > 0 && (
-              <BookRow title="Islamic Books" label="RELIGION" books={state.islamicBooks} bookSize={120} onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'islamic', title: 'Islamic Books', query: 'Islamic books' } })} />
+              <BookRow
+                title="Islamic Books"
+                books={state.islamicBooks}
+                bookSize={110}
+                onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'islamic', title: 'Islamic Books', query: 'Islamic books' } })}
+              />
             )}
 
+            {/* Urdu Novels */}
             {state.novelBooks.length > 0 && (
-              <BookRow title="Urdu Novels" label="FICTION" books={state.novelBooks} bookSize={150} onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'urdu_novels', title: 'Urdu Novels', query: 'Urdu novels' } })} />
+              <BookRow
+                title="Urdu Novels"
+                books={state.novelBooks}
+                bookSize={110}
+                onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'urdu_novels', title: 'Urdu Novels', query: 'Urdu novels' } })}
+              />
             )}
 
-            {state.trendingBooks.length > 0 && (
-              <BookRow title="Trending Now" label="TRENDING" books={state.trendingBooks} bookSize={130} onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'trending_now', title: 'Trending Now', query: 'trending now 2025' } })} />
-            )}
-
+            {/* History */}
             {state.historyBooks.length > 0 && (
-              <BookRow title="History & Biography" label="NON-FICTION" books={state.historyBooks} bookSize={125} onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'history', title: 'History & Biography', query: 'history biography' } })} />
+              <BookRow
+                title="History & Biography"
+                books={state.historyBooks}
+                bookSize={110}
+                onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'history', title: 'History & Biography', query: 'history biography' } })}
+              />
             )}
 
+            {/* Poetry */}
             {state.poetryBooks.length > 0 && (
-              <BookRow title="Poetry & Literature" label="POETRY" books={state.poetryBooks} bookSize={115} onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'poetry', title: 'Poetry & Literature', query: 'poetry literature' } })} />
+              <BookRow
+                title="Poetry & Literature"
+                books={state.poetryBooks}
+                bookSize={110}
+                onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'poetry', title: 'Poetry & Literature', query: 'poetry literature' } })}
+              />
             )}
 
+            {/* Fun Reads */}
             {state.funnyBooks.length > 0 && (
-              <BookRow title="Fun Reads" label="HUMOR" books={state.funnyBooks} bookSize={120} onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'funny', title: 'Fun Reads', query: 'funny humor' } })} />
+              <BookRow
+                title="Fun Reads"
+                books={state.funnyBooks}
+                bookSize={110}
+                onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'funny', title: 'Fun Reads', query: 'funny humor' } })}
+              />
             )}
 
+            {/* PDF Novels */}
             {state.pdfNovels.length > 0 && (
-              <BookRow title="PDF Novels" label="PDF" books={state.pdfNovels} bookSize={135} onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'pdf_novels', title: 'PDF Novels', query: 'Urdu novels PDF' } })} />
+              <BookRow
+                title="PDF Novels"
+                books={state.pdfNovels}
+                bookSize={110}
+                onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'pdf_novels', title: 'PDF Novels', query: 'Urdu novels PDF' } })}
+              />
             )}
           </Animated.View>
         )}
@@ -333,23 +386,144 @@ export default function HomeScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { paddingBottom: 100 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.md },
-  headerTitle: { fontSize: FontSize.heading2, fontWeight: '800', letterSpacing: -1 },
-  headerSub: { fontSize: FontSize.xs, marginTop: 2 },
-  notifBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center', position: 'relative' },
-  notifDot: { position: 'absolute', top: 8, right: 8, width: 7, height: 7, borderRadius: 4 },
-  section: { marginBottom: Spacing.xl },
-  sectionLabel: { fontSize: FontSize.xs, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: Spacing.xs },
-  sectionTitle: { fontSize: FontSize.heading3, fontWeight: '700', letterSpacing: -0.3, marginBottom: Spacing.lg },
-  continueReadingList: { gap: Spacing.md },
-  continueCard: { flexDirection: 'row', borderRadius: BorderRadius.lg, padding: Spacing.md, gap: Spacing.md, ...Shadows.card },
-  continueCover: { width: 56, height: 80, borderRadius: BorderRadius.sm },
-  continueInfo: { flex: 1, justifyContent: 'center', gap: Spacing.xs },
-  continueTitle: { fontSize: FontSize.bodyMd, fontWeight: '600', letterSpacing: -0.1 },
-  continueAuthor: { fontSize: FontSize.sm },
-  quickActions: { flexDirection: 'row', gap: Spacing.md, marginBottom: Spacing.xxl },
-  emptyState: { alignItems: 'center', paddingTop: 40, paddingBottom: 40 },
-  emptyTitle: { fontSize: FontSize.bodyMd, fontWeight: '600', marginTop: Spacing.md },
-  emptySub: { fontSize: FontSize.xs, marginTop: 4 },
+  scrollContent: { paddingBottom: 120 },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.xxl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.lg,
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.5,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  iconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.xl,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notifDot: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 2,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginHorizontal: Spacing.xxl,
+    marginBottom: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    height: 40,
+    borderRadius: BorderRadius.sm,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  searchPlaceholder: {
+    fontSize: FontSize.bodyMd,
+  },
+  section: {
+    marginBottom: Spacing.xxxl,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginBottom: Spacing.lg,
+  },
+  sectionTitle: {
+    fontSize: FontSize.heading3,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.3,
+  },
+  seeAll: {
+    fontSize: FontSize.bodyMd,
+    fontWeight: FontWeight.medium,
+  },
+  featuredCard: {
+    flexDirection: 'row',
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.md,
+    gap: Spacing.lg,
+  },
+  featuredImage: {
+    width: 80,
+    height: 120,
+    borderRadius: BorderRadius.md,
+    backgroundColor: '#e0e0e0',
+  },
+  featuredInfo: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: Spacing.xs,
+  },
+  featuredTitle: {
+    fontSize: FontSize.bodyMdMedium,
+    fontWeight: FontWeight.semibold,
+    letterSpacing: -0.2,
+    lineHeight: 20,
+  },
+  featuredAuthor: {
+    fontSize: FontSize.sm,
+  },
+  featuredProgress: {
+    gap: Spacing.xs,
+    marginTop: Spacing.xs,
+  },
+  progressText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.medium,
+  },
+  categoriesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+  },
+  categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.xl,
+    minWidth: '45%',
+    flex: 1,
+  },
+  categoryIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryLabel: {
+    fontSize: FontSize.bodyMdMedium,
+    fontWeight: FontWeight.medium,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingTop: 60,
+    paddingBottom: 60,
+  },
+  emptyTitle: {
+    fontSize: FontSize.heading4,
+    fontWeight: FontWeight.semibold,
+    marginTop: Spacing.lg,
+  },
+  emptySub: {
+    fontSize: FontSize.bodyMd,
+    marginTop: Spacing.sm,
+  },
 });
