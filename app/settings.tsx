@@ -52,7 +52,7 @@ export default function SettingsScreen() {
         <View style={styles.backBtn} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {sections.map((section, sIdx) => (
           <View key={sIdx} style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{section.title}</Text>
@@ -63,26 +63,29 @@ export default function SettingsScreen() {
                   style={[styles.row, iIdx < section.items.length - 1 && { borderBottomColor: colors.border, borderBottomWidth: 1 }]}
                   onPress={item.onPress}
                   disabled={item.type === 'toggle' || item.type === 'info'}
-                  activeOpacity={0.6}
+                  activeOpacity={0.7}
                 >
                   <View style={styles.rowLeft}>
                     <View style={[styles.iconWrap, { backgroundColor: colors.primarySoft }]}>
-                      <Ionicons name={item.icon as any} size={18} color={colors.textPrimary} />
+                      <Ionicons name={item.icon as any} size={20} color={colors.textPrimary} />
                     </View>
-                    <View>
+                    <View style={styles.rowText}>
                       <Text style={[styles.rowTitle, { color: colors.textPrimary }]}>{item.title}</Text>
-                      {item.subtitle && <Text style={[styles.rowSub, { color: colors.textSecondary }]}>{item.subtitle}</Text>}
+                      {item.subtitle && (
+                        <Text style={[styles.rowSub, { color: colors.textSecondary }]}>{item.subtitle}</Text>
+                      )}
                     </View>
                   </View>
                   {item.type === 'toggle' && (
                     <Switch
                       value={item.value}
                       onValueChange={item.onToggle}
-                      trackColor={{ false: colors.border, true: colors.success }}
-                      thumbColor={item.value ? '#fff' : colors.textSecondary}
+                      trackColor={{ false: colors.border, true: colors.accent }}
+                      thumbColor={item.value ? colors.onPrimary : colors.textSecondary}
+                      ios_backgroundColor={colors.border}
                     />
                   )}
-                  {item.type === 'arrow' && <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />}
+                  {item.type === 'arrow' && <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />}
                 </TouchableOpacity>
               ))}
             </View>
@@ -95,16 +98,71 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.md },
-  backBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: FontSize.xl, fontWeight: '700' },
-  content: { paddingHorizontal: Spacing.xxl, paddingBottom: 100 },
-  section: { marginBottom: Spacing.xxl },
-  sectionTitle: { fontSize: FontSize.xs, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginBottom: Spacing.md },
-  card: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
-  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.md, paddingVertical: Spacing.md },
-  rowLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, flex: 1 },
-  iconWrap: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  rowTitle: { fontSize: FontSize.bodyMd, fontWeight: '500' },
-  rowSub: { fontSize: FontSize.sm, marginTop: 2 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: FontSize.heading5,
+    fontWeight: '700',
+  },
+  content: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: 100,
+  },
+  section: {
+    marginBottom: Spacing.xxl,
+  },
+  sectionTitle: {
+    fontSize: FontSize.xs,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: Spacing.sm,
+    marginLeft: Spacing.xs,
+  },
+  card: {
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+  },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    flex: 1,
+  },
+  rowText: {
+    flex: 1,
+  },
+  iconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.sm,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rowTitle: {
+    fontSize: FontSize.bodyMd,
+    fontWeight: '500',
+  },
+  rowSub: {
+    fontSize: FontSize.bodySm,
+    marginTop: 2,
+  },
 });
