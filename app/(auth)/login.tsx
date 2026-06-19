@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
-import { Spacing, FontSize, BorderRadius } from '../../src/constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
 import { signInWithEmail, signUpWithEmail } from '../../src/services/auth';
 import { useAuth } from '../../src/context/AuthContext';
 
@@ -80,8 +80,8 @@ export default function LoginScreen() {
       >
         {/* Logo + Brand */}
         <View style={styles.brandSection}>
-          <View style={[styles.logoCircle, { backgroundColor: colors.buttonPrimary }]}>
-            <Text style={[styles.logoLetter, { color: colors.buttonPrimaryText }]}>Z</Text>
+          <View style={[styles.logoCircle, { backgroundColor: colors.accentSoft }]}>
+            <Ionicons name="book" size={32} color={colors.accentBright} />
           </View>
           <Text style={[styles.appName, { color: colors.textPrimary }]}>Zesho</Text>
           <Text style={[styles.tagline, { color: colors.textSecondary }]}>
@@ -92,8 +92,8 @@ export default function LoginScreen() {
         {/* Form */}
         <View style={styles.formSection}>
           {isSignUp && (
-            <View style={[styles.inputWrap, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
-              <Ionicons name="person-outline" size={18} color={colors.textSecondary} />
+            <View style={[styles.inputWrap, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+              <Ionicons name="person-outline" size={18} color={colors.textMuted} />
               <TextInput
                 style={[styles.input, { color: colors.textPrimary }]}
                 placeholder="Full name"
@@ -105,8 +105,8 @@ export default function LoginScreen() {
             </View>
           )}
 
-          <View style={[styles.inputWrap, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
-            <Ionicons name="mail-outline" size={18} color={colors.textSecondary} />
+          <View style={[styles.inputWrap, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+            <Ionicons name="mail-outline" size={18} color={colors.textMuted} />
             <TextInput
               style={[styles.input, { color: colors.textPrimary }]}
               placeholder="Email"
@@ -119,8 +119,8 @@ export default function LoginScreen() {
             />
           </View>
 
-          <View style={[styles.inputWrap, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
-            <Ionicons name="lock-closed-outline" size={18} color={colors.textSecondary} />
+          <View style={[styles.inputWrap, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+            <Ionicons name="lock-closed-outline" size={18} color={colors.textMuted} />
             <TextInput
               style={[styles.input, { color: colors.textPrimary }]}
               placeholder="Password"
@@ -131,12 +131,12 @@ export default function LoginScreen() {
               autoCapitalize="none"
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={18} color={colors.textSecondary} />
+              <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={18} color={colors.textMuted} />
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity
-            style={[styles.submitBtn, { backgroundColor: colors.buttonPrimary }]}
+            style={[styles.submitBtn, { backgroundColor: colors.buttonPrimary }, Shadows.elevated]}
             onPress={handleEmailAuth}
             disabled={loading}
             activeOpacity={0.8}
@@ -153,10 +153,10 @@ export default function LoginScreen() {
 
         {/* Toggle */}
         <TouchableOpacity style={styles.toggleRow} onPress={() => setIsSignUp(!isSignUp)} activeOpacity={0.7}>
-          <Text style={{ color: colors.textSecondary, fontSize: FontSize.bodyMd }}>
+          <Text style={[styles.toggleText, { color: colors.textSecondary }]}>
             {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
           </Text>
-          <Text style={{ color: colors.buttonPrimary, fontWeight: '700', fontSize: FontSize.bodyMd }}>
+          <Text style={[styles.toggleText, { color: colors.accentBright, fontWeight: FontWeight.bold }]}>
             {isSignUp ? 'Sign In' : 'Sign Up'}
           </Text>
         </TouchableOpacity>
@@ -167,7 +167,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         {/* Terms */}
-        <Text style={[styles.terms, { color: colors.textMuted }]}>
+        <Text style={[styles.terms, { color: colors.textTertiary }]}>
           By continuing, you agree to our Terms and Privacy Policy
         </Text>
       </ScrollView>
@@ -185,18 +185,43 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flexGrow: 1, paddingHorizontal: Spacing.xxl },
   brandSection: { alignItems: 'center', marginBottom: Spacing.xxxl + 20 },
-  logoCircle: { width: 72, height: 72, borderRadius: 36, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.lg },
-  logoLetter: { fontSize: 32, fontWeight: '800' },
-  appName: { fontSize: 32, fontWeight: '800', letterSpacing: -0.5, marginBottom: Spacing.xs },
+  logoCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.xxl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+  },
+  appName: {
+    fontSize: FontSize.heading1,
+    fontWeight: FontWeight.extrabold,
+    letterSpacing: -0.5,
+    marginBottom: Spacing.xs,
+  },
   tagline: { fontSize: FontSize.bodyMd },
   formSection: { gap: Spacing.md, marginBottom: Spacing.xl },
-  inputWrap: { flexDirection: 'row', alignItems: 'center', borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md, gap: Spacing.sm, borderWidth: 1, height: 50 },
+  inputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.md,
+    gap: Spacing.sm,
+    borderWidth: 1,
+    height: 52,
+  },
   input: { flex: 1, fontSize: FontSize.bodyMd, height: '100%' },
-  submitBtn: { paddingVertical: Spacing.md + 4, borderRadius: BorderRadius.md, alignItems: 'center', marginTop: Spacing.sm },
-  submitText: { fontSize: FontSize.bodyMd, fontWeight: '700' },
+  submitBtn: {
+    paddingVertical: Spacing.md + 4,
+    borderRadius: BorderRadius.lg,
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+  },
+  submitText: { fontSize: FontSize.bodyMdMedium, fontWeight: FontWeight.bold },
   toggleRow: { flexDirection: 'row', justifyContent: 'center', marginTop: Spacing.lg },
+  toggleText: { fontSize: FontSize.bodyMd },
   skipRow: { alignItems: 'center', marginTop: Spacing.md },
-  skipText: { fontSize: FontSize.bodySm, fontWeight: '500' },
+  skipText: { fontSize: FontSize.bodySm, fontWeight: FontWeight.medium },
   terms: { fontSize: FontSize.xs, textAlign: 'center', marginTop: Spacing.xl, lineHeight: 18 },
   overlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' },
 });
