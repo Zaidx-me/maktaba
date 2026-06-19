@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { BookCard } from '../src/components/BookCard';
 import { Book } from '../src/types';
 import { useTheme } from '../src/context/ThemeContext';
@@ -55,7 +55,7 @@ export default function FavoritesScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
+          <MaterialIcons name="chevron-left" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Favorites</Text>
         <View style={styles.backBtn} />
@@ -64,7 +64,7 @@ export default function FavoritesScreen() {
       {favorites.length === 0 ? (
         <View style={styles.emptyContainer}>
           <View style={[styles.emptyIconContainer, { backgroundColor: colors.accentSoft }]}>
-            <Ionicons name="heart-outline" size={40} color={colors.accent} />
+            <MaterialIcons name="favorite-border" size={40} color={colors.accent} />
           </View>
           <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>No favorites yet</Text>
           <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>

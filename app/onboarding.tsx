@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../src/context/ThemeContext';
 import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../src/constants/theme';
 
@@ -13,19 +13,19 @@ const { width: SCREEN_W } = Dimensions.get('window');
 const SLIDES = [
   {
     id: '1',
-    icon: 'library-outline' as const,
+    icon: 'library-books' as const,
     title: 'Discover Thousands of Books',
     desc: 'Explore a vast collection from Google Books, Open Library, Gutendex, and 2,138+ Urdu titles.',
   },
   {
     id: '2',
-    icon: 'book-outline' as const,
+    icon: 'menu-book' as const,
     title: 'Read Anywhere',
     desc: 'In-app reader with page-flipping UI. Download or read online \u2014 your choice.',
   },
   {
     id: '3',
-    icon: 'bookmark-outline' as const,
+    icon: 'bookmark' as const,
     title: 'Build Your Library',
     desc: 'Track reading progress, write notes, and rate books. Your personal reading journey.',
   },
@@ -58,7 +58,7 @@ export default function OnboardingScreen() {
   const renderItem = ({ item }: { item: typeof SLIDES[0] }) => (
     <View style={[styles.slide, { width: SCREEN_W }]}>
       <View style={[styles.iconWrap, { backgroundColor: colors.accentSoft }]}>
-        <Ionicons name={item.icon} size={56} color={colors.accentBright} />
+        <MaterialIcons name={item.icon} size={56} color={colors.accentBright} />
       </View>
       <Text style={[styles.slideTitle, { color: colors.textPrimary }]}>{item.title}</Text>
       <Text style={[styles.slideDesc, { color: colors.textSecondary }]}>{item.desc}</Text>
@@ -117,7 +117,7 @@ export default function OnboardingScreen() {
           <Text style={[styles.nextText, { color: colors.buttonPrimaryText }]}>
             {currentIndex === SLIDES.length - 1 ? 'Get Started' : 'Next'}
           </Text>
-          <Ionicons name="arrow-forward" size={18} color={colors.buttonPrimaryText} />
+          <MaterialIcons name="arrow-forward" size={18} color={colors.buttonPrimaryText} />
         </TouchableOpacity>
       </View>
     </View>

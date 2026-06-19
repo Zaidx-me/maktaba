@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
 import { useTheme } from '../../src/context/ThemeContext';
 import { getBookById } from '../../src/services/googleBooks';
@@ -137,7 +137,7 @@ export default function BookDetailScreen() {
 
   if (!book) return (
     <View style={[styles.loading, { backgroundColor: colors.background }]}>
-      <Ionicons name="alert-circle-outline" size={48} color={colors.textSecondary} />
+      <MaterialIcons name="error-outline" size={48} color={colors.textSecondary} />
       <Text style={{ color: colors.textPrimary, marginTop: Spacing.md }}>Book not found</Text>
       <TouchableOpacity onPress={() => router.back()} style={{ marginTop: Spacing.lg }}>
         <Text style={{ color: colors.buttonPrimary }}>Go Back</Text>
@@ -159,10 +159,10 @@ export default function BookDetailScreen() {
           {/* Nav bar */}
           <View style={[styles.navBar, { paddingTop: insets.top + Spacing.sm }]}>
             <TouchableOpacity style={[styles.navBtn, { backgroundColor: colors.glass }]} onPress={() => router.back()}>
-              <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
+              <MaterialIcons name="chevron-left" size={22} color={colors.textPrimary} />
             </TouchableOpacity>
             <TouchableOpacity style={[styles.navBtn, { backgroundColor: colors.glass }]} onPress={handleShare}>
-              <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />
+              <MaterialIcons name="more-horiz" size={20} color={colors.textPrimary} />
             </TouchableOpacity>
           </View>
 
@@ -189,32 +189,32 @@ export default function BookDetailScreen() {
           {/* Rating + info row */}
           <View style={styles.infoRow}>
             <View style={[styles.infoChip, { backgroundColor: colors.surfaceElevated }]}>
-              <Ionicons name="star" size={14} color="#FFD700" />
+              <MaterialIcons name="star" size={14} color="#FFD700" />
               <Text style={[styles.infoChipText, { color: colors.textPrimary }]}>
                 {userRating > 0 ? `${userRating}.0` : book.averageRating > 0 ? book.averageRating.toFixed(1) : 'N/A'}
               </Text>
             </View>
             {book.pageCount > 0 && (
               <View style={[styles.infoChip, { backgroundColor: colors.surfaceElevated }]}>
-                <Ionicons name="document-text-outline" size={14} color={colors.textSecondary} />
+                <MaterialIcons name="description" size={14} color={colors.textSecondary} />
                 <Text style={[styles.infoChipText, { color: colors.textPrimary }]}>{book.pageCount} pages</Text>
               </View>
             )}
             {book.publishedDate && book.publishedDate !== 'N/A' && (
               <View style={[styles.infoChip, { backgroundColor: colors.surfaceElevated }]}>
-                <Ionicons name="calendar-outline" size={14} color={colors.textSecondary} />
+                <MaterialIcons name="calendar-today" size={14} color={colors.textSecondary} />
                 <Text style={[styles.infoChipText, { color: colors.textPrimary }]}>{book.publishedDate}</Text>
               </View>
             )}
             {isPdfBook && (
               <View style={[styles.infoChip, { backgroundColor: colors.surfaceElevated }]}>
-                <Ionicons name="arrow-down-outline" size={14} color={colors.textSecondary} />
+                <MaterialIcons name="arrow-downward" size={14} color={colors.textSecondary} />
                 <Text style={[styles.infoChipText, { color: colors.textSecondary }]}>Download Only</Text>
               </View>
             )}
             {hasDriveLink && (
               <View style={[styles.infoChip, { backgroundColor: colors.accentSoft }]}>
-                <Ionicons name="cloud-download-outline" size={14} color={colors.accent} />
+                <MaterialIcons name="cloud-download" size={14} color={colors.accent} />
                 <Text style={[styles.infoChipText, { color: colors.accent }]}>Free</Text>
               </View>
             )}
@@ -223,12 +223,12 @@ export default function BookDetailScreen() {
           {/* Action buttons */}
           <View style={styles.actionRow}>
             <TouchableOpacity style={[styles.readBtn, { backgroundColor: colors.buttonPrimary }]} onPress={isPdfBook ? handleDownload : handleReadNow} activeOpacity={0.8}>
-              <Ionicons name={isPdfBook ? "arrow-down-outline" : "book"} size={18} color={colors.buttonPrimaryText} />
+              <MaterialIcons name={isPdfBook ? "arrow-downward" : "menu-book"} size={18} color={colors.buttonPrimaryText} />
               <Text style={[styles.readBtnText, { color: colors.buttonPrimaryText }]}>{isPdfBook ? 'Direct Download' : 'Read Now'}</Text>
             </TouchableOpacity>
             {!isPdfBook && (
               <TouchableOpacity style={[styles.downloadBtn, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]} onPress={handleDownload} activeOpacity={0.8}>
-                <Ionicons name="arrow-down-outline" size={22} color={colors.textPrimary} />
+                <MaterialIcons name="arrow-downward" size={22} color={colors.textPrimary} />
               </TouchableOpacity>
             )}
           </View>
@@ -239,7 +239,7 @@ export default function BookDetailScreen() {
             onPress={handleAddToLibrary}
             activeOpacity={0.7}
           >
-            <Ionicons name={inLibrary ? 'heart' : 'heart-outline'} size={18} color={inLibrary ? colors.white : colors.textPrimary} />
+            <MaterialIcons name={inLibrary ? 'favorite' : 'favorite-border'} size={18} color={inLibrary ? colors.white : colors.textPrimary} />
             <Text style={[styles.libraryBtnText, { color: inLibrary ? colors.white : colors.textPrimary }]}>
               {inLibrary ? 'In Favourites' : 'Add to Favourite'}
             </Text>
@@ -252,7 +252,7 @@ export default function BookDetailScreen() {
               <View style={styles.starsRow}>
                 {[1, 2, 3, 4, 5].map(s => (
                   <TouchableOpacity key={s} onPress={() => handleRatingChange(s)} style={styles.starBtn}>
-                    <Ionicons name={s <= userRating ? 'star' : 'star-outline'} size={28} color={s <= userRating ? '#FFD700' : colors.surfaceElevated} />
+                    <MaterialIcons name={s <= userRating ? 'star' : 'star-border'} size={28} color={s <= userRating ? '#FFD700' : colors.surfaceElevated} />
                   </TouchableOpacity>
                 ))}
               </View>

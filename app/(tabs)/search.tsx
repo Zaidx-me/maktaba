@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { BookCard } from '../../src/components/BookCard';
 import { RequestBookModal } from '../../src/components/RequestBookModal';
 import { Book } from '../../src/types';
@@ -43,7 +43,7 @@ export default function SearchScreen() {
       <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
         <Text style={[styles.title, { color: colors.textPrimary }]}>Search</Text>
         <View style={[styles.searchContainer, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
-          <Ionicons name="search" size={20} color={colors.textSecondary} />
+          <MaterialIcons name="search" size={20} color={colors.textSecondary} />
           <TextInput
             style={[styles.searchInput, { color: colors.textPrimary }]}
             placeholder="Search books, authors..."
@@ -55,7 +55,7 @@ export default function SearchScreen() {
           />
           {query.length > 0 && (
             <TouchableOpacity onPress={() => { setQuery(''); setResults([]); setSearched(false); }}>
-              <Ionicons name="close-circle" size={20} color={colors.textSecondary} />
+              <MaterialIcons name="close" size={20} color={colors.textSecondary} />
             </TouchableOpacity>
           )}
         </View>
@@ -78,7 +78,7 @@ export default function SearchScreen() {
           ListEmptyComponent={
             searched ? (
               <View style={styles.emptyContainer}>
-                <Ionicons name="search-outline" size={64} color={colors.textSecondary} />
+                <MaterialIcons name="search" size={64} color={colors.textSecondary} />
                 <Text style={[styles.emptyText, { color: colors.textPrimary }]}>No books found</Text>
                 <Text style={[styles.emptySubtext, { color: colors.textSecondary }]}>Try a different search term</Text>
                 <TouchableOpacity
@@ -86,13 +86,13 @@ export default function SearchScreen() {
                   onPress={() => setShowRequest(true)}
                   activeOpacity={0.7}
                 >
-                  <Ionicons name="add-circle-outline" size={20} color={colors.textPrimary} />
+                  <MaterialIcons name="add-circle-outline" size={20} color={colors.textPrimary} />
                   <Text style={[styles.requestBtnText, { color: colors.textPrimary }]}>Request This Book</Text>
                 </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.emptyContainer}>
-                <Ionicons name="search-outline" size={64} color={colors.textSecondary} />
+                <MaterialIcons name="search" size={64} color={colors.textSecondary} />
                 <Text style={[styles.emptyText, { color: colors.textPrimary }]}>Search for books</Text>
                 <Text style={[styles.emptySubtext, { color: colors.textSecondary }]}>Find your next great read</Text>
               </View>

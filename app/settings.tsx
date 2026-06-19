@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Spacing, FontSize, BorderRadius } from '../src/constants/theme';
 import { useTheme } from '../src/context/ThemeContext';
@@ -27,7 +27,7 @@ export default function SettingsScreen() {
     {
       title: 'Appearance',
       items: [{
-        icon: 'moon', title: 'Dark Mode',
+        icon: 'dark-mode', title: 'Dark Mode',
         subtitle: isDark ? 'Currently dark' : 'Currently light',
         type: 'toggle', value: isDark, onToggle: () => toggleTheme(),
       }],
@@ -35,9 +35,9 @@ export default function SettingsScreen() {
     {
       title: 'About',
       items: [
-        { icon: 'document-text', title: 'Terms of Service', type: 'arrow' },
-        { icon: 'shield-checkmark', title: 'Privacy Policy', type: 'arrow' },
-        { icon: 'information-circle', title: 'App Version', subtitle: '1.0.0', type: 'info' },
+        { icon: 'description', title: 'Terms of Service', type: 'arrow' },
+        { icon: 'verified-user', title: 'Privacy Policy', type: 'arrow' },
+        { icon: 'info', title: 'App Version', subtitle: '1.0.0', type: 'info' },
       ],
     },
   ];
@@ -46,7 +46,7 @@ export default function SettingsScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+          <MaterialIcons name="chevron-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.textPrimary }]}>Settings</Text>
         <View style={styles.backBtn} />
@@ -67,7 +67,7 @@ export default function SettingsScreen() {
                 >
                   <View style={styles.rowLeft}>
                     <View style={[styles.iconWrap, { backgroundColor: colors.primarySoft }]}>
-                      <Ionicons name={item.icon as any} size={20} color={colors.textPrimary} />
+                      <MaterialIcons name={item.icon as any} size={20} color={colors.textPrimary} />
                     </View>
                     <View style={styles.rowText}>
                       <Text style={[styles.rowTitle, { color: colors.textPrimary }]}>{item.title}</Text>
@@ -85,7 +85,7 @@ export default function SettingsScreen() {
                       ios_backgroundColor={colors.border}
                     />
                   )}
-                  {item.type === 'arrow' && <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />}
+                  {item.type === 'arrow' && <MaterialIcons name="chevron-right" size={20} color={colors.textMuted} />}
                 </TouchableOpacity>
               ))}
             </View>

@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useNavigation } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { BookRow } from '../../src/components/BookRow';
 import { SkeletonRow } from '../../src/components/SkeletonLoader';
 import { RequestBookModal } from '../../src/components/RequestBookModal';
@@ -117,7 +117,7 @@ export default function HomeScreen() {
       dispatch({ type: 'SET_INITIAL', hero, famous, trending });
     } catch {}
     dispatch({ type: 'SET_LOADING', loading: false });
-    Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
+    Animated.timing(fadeAnim, { toValue: 1, duration: 350, useNativeDriver: true }).start();
     InteractionManager.runAfterInteractions(() => {
       const seen = new Set<string>();
       const addUnique = (arr: Book[]) => {
@@ -172,8 +172,6 @@ export default function HomeScreen() {
     router.push({ pathname: '/(tabs)/search', params: { q: query } });
   };
 
-  const isEmpty = !state.heroBooks.length && !state.famousBooks.length && !state.trendingBooks.length;
-
   const featuredBook = state.heroBooks[0];
 
   return (
@@ -187,21 +185,19 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={[s.header, { paddingHorizontal: Spacing.xxl }]}>
           <Text style={[s.headerTitle, { color: colors.textPrimary }]}>Home</Text>
-          <View style={s.headerActions}>
-            <TouchableOpacity onPress={() => router.push('/notifications')} style={[s.iconBtn, { backgroundColor: colors.surface }]}>
-              <Ionicons name="notifications-outline" size={20} color={colors.textPrimary} />
-              {state.hasUnread && <View style={[s.notifDot, { backgroundColor: colors.error }]} />}
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={() => router.push('/notifications')} style={[s.iconBtn, { backgroundColor: colors.surface }]}>
+            <MaterialIcons name="notifications-none" size={20} color={colors.textPrimary} />
+            {state.hasUnread && <View style={[s.notifDot, { backgroundColor: colors.error }]} />}
+          </TouchableOpacity>
         </View>
 
         {/* Search Bar */}
         <TouchableOpacity
-          style={[s.searchBar, { backgroundColor: colors.surface, borderColor: colors.separator }]}
+          style={[s.searchBar, { backgroundColor: colors.surface, borderColor: colors.border }]}
           onPress={() => router.push('/(tabs)/search')}
           activeOpacity={0.7}
         >
-          <Ionicons name="search" size={18} color={colors.textMuted} />
+          <MaterialIcons name="search" size={18} color={colors.textMuted} />
           <Text style={[s.searchPlaceholder, { color: colors.textMuted }]}>Search</Text>
         </TouchableOpacity>
 
@@ -213,7 +209,7 @@ export default function HomeScreen() {
           </View>
         ) : (
           <Animated.View style={{ opacity: fadeAnim }}>
-            {/* Continue Reading / Featured */}
+            {/* Continue Reading */}
             {featuredBook && (
               <View style={s.section}>
                 <View style={[s.sectionHeader, { paddingHorizontal: Spacing.xxl }]}>
@@ -238,7 +234,7 @@ export default function HomeScreen() {
                       </Text>
                     )}
                     <View style={s.featuredProgress}>
-                      <ProgressBar progress={0.35} height={3} />
+                      <ProgressBar progress={0.35} height={2} />
                       <Text style={[s.progressText, { color: colors.textMuted }]}>35%</Text>
                     </View>
                   </View>
@@ -267,21 +263,21 @@ export default function HomeScreen() {
               />
             )}
 
-            {/* Categories Section */}
+            {/* Categories */}
             <View style={s.section}>
               <View style={[s.sectionHeader, { paddingHorizontal: Spacing.xxl }]}>
-                <Text style={[s.sectionTitle, { color: colors.textPrimary }]}>Browse Categories</Text>
+                <Text style={[s.sectionTitle, { color: colors.textPrimary }]}>Browse</Text>
               </View>
               <View style={[s.categoriesGrid, { paddingHorizontal: Spacing.xxl }]}>
                 {[
-                  { icon: 'book-outline', label: 'Islamic', color: colors.accent },
-                  { icon: 'library-outline', label: 'Novels', color: colors.warning },
-                  { icon: 'time-outline', label: 'History', color: colors.success },
-                  { icon: 'musical-notes-outline', label: 'Poetry', color: '#FF6B6B' },
+                  { icon: 'book', label: 'Islamic', color: '#6C63FF' },
+                  { icon: 'auto-stories', label: 'Novels', color: '#E07C24' },
+                  { icon: 'history-edu', label: 'History', color: '#34C759' },
+                  { icon: 'menu-book', label: 'Poetry', color: '#FF6B6B' },
                 ].map((cat) => (
                   <TouchableOpacity
                     key={cat.label}
-                    style={[s.categoryChip, { backgroundColor: colors.surface }]}
+                    style={[s.categoryChip, { backgroundColor: colors.surface, borderColor: colors.border }]}
                     activeOpacity={0.7}
                     onPress={() => {
                       const queryMap: Record<string, string> = {
@@ -299,22 +295,12 @@ export default function HomeScreen() {
                       router.push({ pathname: '/shelf/[category]', params: { category: catMap[cat.label], title: cat.label, query: queryMap[cat.label] } });
                     }}
                   >
-                    <View style={[s.categoryIcon, { backgroundColor: cat.color + '18' }]}>
-                      <Ionicons name={cat.icon as any} size={20} color={cat.color} />
-                    </View>
+                    <MaterialIcons name={cat.icon as any} size={20} color={cat.color} />
                     <Text style={[s.categoryLabel, { color: colors.textPrimary }]}>{cat.label}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </View>
-
-            {isEmpty && (
-              <View style={s.emptyState}>
-                <Ionicons name="book-outline" size={48} color={colors.textMuted} />
-                <Text style={[s.emptyTitle, { color: colors.textPrimary }]}>No books found</Text>
-                <Text style={[s.emptySub, { color: colors.textSecondary }]}>Pull down to refresh</Text>
-              </View>
-            )}
 
             {/* Islamic Books */}
             {state.islamicBooks.length > 0 && (
@@ -391,7 +377,6 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: Spacing.xxl,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.lg,
   },
@@ -399,10 +384,6 @@ const s = StyleSheet.create({
     fontSize: 34,
     fontWeight: FontWeight.bold,
     letterSpacing: -0.5,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
   },
   iconBtn: {
     width: 36,
@@ -424,7 +405,6 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    marginHorizontal: Spacing.xxl,
     marginBottom: Spacing.xl,
     paddingHorizontal: Spacing.lg,
     height: 40,
@@ -500,30 +480,10 @@ const s = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     minWidth: '45%',
     flex: 1,
-  },
-  categoryIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: BorderRadius.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
   },
   categoryLabel: {
     fontSize: FontSize.bodyMdMedium,
     fontWeight: FontWeight.medium,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 60,
-  },
-  emptyTitle: {
-    fontSize: FontSize.heading4,
-    fontWeight: FontWeight.semibold,
-    marginTop: Spacing.lg,
-  },
-  emptySub: {
-    fontSize: FontSize.bodyMd,
-    marginTop: Spacing.sm,
   },
 });

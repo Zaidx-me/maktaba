@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { Book } from '../../src/types';
 import { getAllUrduBooks } from '../../src/services/urduBooks';
@@ -153,7 +153,7 @@ export default function LibraryScreen() {
 
   const empty = useMemo(() => (
     <View style={styles.emptyWrap}>
-      <Ionicons name="search-outline" size={48} color={colors.textMuted} />
+      <MaterialIcons name="search" size={48} color={colors.textMuted} />
       <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
         {query ? `No books match "${query}"` : 'No books available'}
       </Text>

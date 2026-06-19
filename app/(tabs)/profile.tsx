@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
 import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
 import { useTheme } from '../../src/context/ThemeContext';
@@ -29,9 +29,9 @@ export default function ProfileScreen() {
     {
       title: 'Library',
       items: [
-        { icon: 'heart-outline', label: 'Favorites', route: '/favorites' },
-        { icon: 'time-outline', label: 'Reading History', route: '/history' },
-        { icon: 'bookmark-outline', label: 'Bookmarks', route: '/(tabs)/notes' },
+        { icon: 'favorite-border', label: 'Favorites', route: '/favorites' },
+        { icon: 'history', label: 'Reading History', route: '/history' },
+        { icon: 'bookmark', label: 'Bookmarks', route: '/(tabs)/notes' },
       ],
     },
     {
@@ -43,8 +43,8 @@ export default function ProfileScreen() {
     {
       title: 'Settings',
       items: [
-        { icon: 'settings-outline', label: 'Settings', route: '/settings' },
-        { icon: 'help-circle-outline', label: 'Help Center', route: '/help' },
+        { icon: 'settings', label: 'Settings', route: '/settings' },
+        { icon: 'help', label: 'Help Center', route: '/help' },
       ],
     },
   ] : [];
@@ -95,10 +95,10 @@ export default function ProfileScreen() {
                       activeOpacity={0.6}
                     >
                       <View style={styles.menuLeft}>
-                        <Ionicons name={item.icon as any} size={20} color={colors.textSecondary} />
+                        <MaterialIcons name={item.icon as any} size={20} color={colors.textSecondary} />
                         <Text style={[styles.menuLabel, { color: colors.textPrimary }]}>{item.label}</Text>
                       </View>
-                      <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+                      <MaterialIcons name="chevron-right" size={16} color={colors.textMuted} />
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -111,7 +111,7 @@ export default function ProfileScreen() {
               activeOpacity={0.7}
             >
               <View style={styles.menuLeft}>
-                <Ionicons name="trash-outline" size={20} color={colors.textSecondary} />
+                <MaterialIcons name="delete-outline" size={20} color={colors.textSecondary} />
                 <Text style={[styles.menuLabel, { color: colors.textPrimary }]}>Clear Reading History</Text>
               </View>
             </TouchableOpacity>
@@ -124,14 +124,14 @@ export default function ProfileScreen() {
               ])}
               activeOpacity={0.7}
             >
-              <Ionicons name="log-out-outline" size={20} color={colors.error} />
+              <MaterialIcons name="logout" size={20} color={colors.error} />
               <Text style={[styles.logoutText, { color: colors.error }]}>Log Out</Text>
             </TouchableOpacity>
           </>
         ) : (
           <View style={styles.guestWrap}>
             <View style={[styles.guestAvatar, { backgroundColor: colors.surface }]}>
-              <Ionicons name="person-outline" size={40} color={colors.textMuted} />
+              <MaterialIcons name="person-outline" size={40} color={colors.textMuted} />
             </View>
             <Text style={[styles.guestTitle, { color: colors.textPrimary }]}>Guest Mode</Text>
             <Text style={[styles.guestSub, { color: colors.textSecondary }]}>Sign in to save books and track progress</Text>
@@ -151,7 +151,7 @@ export default function ProfileScreen() {
           onPress={() => setShowRequest(true)}
           activeOpacity={0.7}
         >
-          <Ionicons name="add-circle-outline" size={20} color={colors.textPrimary} />
+          <MaterialIcons name="add-circle-outline" size={20} color={colors.textPrimary} />
           <Text style={[styles.guestRequestText, { color: colors.textPrimary }]}>Request a Book</Text>
         </TouchableOpacity>
       )}

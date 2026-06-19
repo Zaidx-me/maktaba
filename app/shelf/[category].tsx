@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { BookCard } from '../../src/components/BookCard';
 import { SearchBar } from '../../src/components/SearchBar';
@@ -209,7 +209,7 @@ export default function ShelfCategoryScreen() {
     if (error) {
       return (
         <View style={styles.emptyWrap}>
-          <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
+          <MaterialIcons name="error-outline" size={48} color={colors.error} />
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>{error}</Text>
           <TouchableOpacity onPress={loadInitial} style={[styles.retryBtn, { backgroundColor: colors.accentSoft }]}>
             <Text style={[styles.retryText, { color: colors.accentBright }]}>Retry</Text>
@@ -219,7 +219,7 @@ export default function ShelfCategoryScreen() {
     }
     return (
       <View style={styles.emptyWrap}>
-        <Ionicons name="book-outline" size={48} color={colors.textMuted} />
+        <MaterialIcons name="menu-book" size={48} color={colors.textMuted} />
         <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No books found</Text>
       </View>
     );
@@ -235,14 +235,14 @@ export default function ShelfCategoryScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md, borderBottomColor: colors.border }]}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={20} color={colors.textPrimary} />
+          <MaterialIcons name="chevron-left" size={20} color={colors.textPrimary} />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
           <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>{title}</Text>
           {!loading && <Text style={[styles.count, { color: colors.textMuted }]}>{books.length} books</Text>}
         </View>
         <TouchableOpacity style={styles.backBtn} onPress={() => setSearchMode(!searchMode)}>
-          <Ionicons name={searchMode ? 'close' : 'search'} size={18} color={colors.textPrimary} />
+          <MaterialIcons name={searchMode ? 'close' : 'search'} size={18} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 

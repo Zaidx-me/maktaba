@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../src/constants/theme';
 import { useTheme } from '../src/context/ThemeContext';
 import { getDismissedNotifications, dismissNotification } from '../src/services/localDb';
@@ -18,9 +18,9 @@ interface Notification {
 }
 
 const ALL_NOTIFICATIONS: Notification[] = [
-  { id: '1', title: 'Welcome to Zesho', message: 'Discover thousands of free books from world-class libraries.', time: '2 min ago', icon: 'book-outline' },
-  { id: '2', title: 'New Urdu Collection', message: '2,138+ Urdu books just added. Explore classics, poetry, and more.', time: '1 hour ago', icon: 'language-outline' },
-  { id: '3', title: 'Reading Reminder', message: 'Continue where you left off. Your books are waiting!', time: '3 hours ago', icon: 'time-outline' },
+  { id: '1', title: 'Welcome to Zesho', message: 'Discover thousands of free books from world-class libraries.', time: '2 min ago', icon: 'menu-book' },
+  { id: '2', title: 'New Urdu Collection', message: '2,138+ Urdu books just added. Explore classics, poetry, and more.', time: '1 hour ago', icon: 'translate' },
+  { id: '3', title: 'Reading Reminder', message: 'Continue where you left off. Your books are waiting!', time: '3 hours ago', icon: 'history' },
 ];
 
 const { width: SCREEN_W } = Dimensions.get('window');
@@ -50,7 +50,7 @@ function SwipeableNotif({ notif, onDismiss, colors }: { notif: Notification; onD
   return (
     <Animated.View style={[styles.notifAnimated, { opacity, transform: [{ translateX }] }]}>
       <View style={[styles.deleteBg, { backgroundColor: colors.error }]}>
-        <Ionicons name="trash-outline" size={18} color={colors.white} />
+        <MaterialIcons name="delete-outline" size={18} color={colors.white} />
         <Text style={[styles.deleteText, { color: colors.white }]}>Dismiss</Text>
       </View>
       <Animated.View {...panResponder.panHandlers} style={[styles.notifCard, {
@@ -58,7 +58,7 @@ function SwipeableNotif({ notif, onDismiss, colors }: { notif: Notification; onD
         borderLeftColor: colors.accent,
       }, Shadows.card]}>
         <View style={[styles.iconCircle, { backgroundColor: colors.accentSoft }]}>
-          <Ionicons name={notif.icon as any} size={20} color={colors.accent} />
+          <MaterialIcons name={notif.icon as any} size={20} color={colors.accent} />
         </View>
         <View style={styles.notifContent}>
           <Text style={[styles.notifTitle, { color: colors.textPrimary }]}>{notif.title}</Text>
@@ -94,7 +94,7 @@ export default function NotificationsScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={colors.accent} />
+          <MaterialIcons name="chevron-left" size={24} color={colors.accent} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Notifications</Text>
         {notifications.length > 0 ? (
@@ -112,7 +112,7 @@ export default function NotificationsScreen() {
       {notifications.length === 0 ? (
         <View style={styles.emptyContainer}>
           <View style={[styles.emptyIconCircle, { backgroundColor: colors.accentSoft }]}>
-            <Ionicons name="notifications-off-outline" size={48} color={colors.accent} />
+            <MaterialIcons name="notifications-off" size={48} color={colors.accent} />
           </View>
           <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>All caught up!</Text>
           <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>No new notifications</Text>

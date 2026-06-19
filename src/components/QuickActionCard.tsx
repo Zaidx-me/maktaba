@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../constants/theme';
 
 interface QuickActionCardProps {
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: keyof typeof MaterialIcons.glyphMap;
   title: string;
   subtitle?: string;
   onPress?: () => void;
@@ -18,13 +18,11 @@ export function QuickActionCard({ icon, title, subtitle, onPress, iconColor }: Q
 
   return (
     <TouchableOpacity
-      style={[styles.container, { backgroundColor: colors.surface }]}
+      style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.border }]}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <View style={[styles.iconContainer, { backgroundColor: accent + '15' }]}>
-        <Ionicons name={icon} size={22} color={accent} />
-      </View>
+      <MaterialIcons name={icon} size={24} color={accent} />
       <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
       {subtitle && (
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{subtitle}</Text>
@@ -39,15 +37,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     alignItems: 'center',
-    ...Shadows.card,
-  },
-  iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
+    gap: Spacing.sm,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   title: {
     fontSize: FontSize.bodySmMedium,
@@ -56,7 +47,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: FontSize.xs,
-    marginTop: 2,
     textAlign: 'center',
   },
 });

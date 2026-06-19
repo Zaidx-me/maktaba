@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, Modal, TextInput, TouchableOpacity,
   KeyboardAvoidingView, Platform, Alert,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { requestBook } from '../services/requestService';
 import { useAuth } from '../context/AuthContext';
@@ -108,7 +108,7 @@ export function RequestBookModal({ visible, onClose, prefilledTitle }: Props) {
                 onPress={handleSubmit}
                 disabled={submitting || !title.trim()}
               >
-                <Ionicons name="paper-plane" size={16} color={colors.white} />
+                <MaterialIcons name="send" size={16} color={colors.white} />
                 <Text style={[styles.btnText, { color: colors.white }]}>Send Request</Text>
               </TouchableOpacity>
             </View>

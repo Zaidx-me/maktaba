@@ -10,7 +10,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { Spacing, FontSize } from '../../src/constants/theme';
 
@@ -28,15 +28,15 @@ export default function ReaderScreen() {
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={[styles.header, { paddingTop: insets.top + Spacing.sm, backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+            <MaterialIcons name="chevron-left" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Reader</Text>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Ionicons name="close" size={22} color={colors.textPrimary} />
+            <MaterialIcons name="close" size={22} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.errorWrap}>
-          <Ionicons name="alert-circle-outline" size={48} color={colors.textSecondary} />
+          <MaterialIcons name="error-outline" size={48} color={colors.textSecondary} />
           <Text style={[styles.errorText, { color: colors.textPrimary }]}>No content available</Text>
         </View>
       </View>
@@ -61,16 +61,16 @@ export default function ReaderScreen() {
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + Spacing.sm, backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+          <MaterialIcons name="chevron-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>{title || 'Reading'}</Text>
         {downloadUrl && (
           <TouchableOpacity style={styles.backBtn} onPress={handleDownload}>
-            <Ionicons name="download-outline" size={22} color={colors.textPrimary} />
+            <MaterialIcons name="download" size={22} color={colors.textPrimary} />
           </TouchableOpacity>
         )}
         <TouchableOpacity style={styles.backBtn} onPress={() => webViewRef.current?.reload()}>
-          <Ionicons name="refresh" size={20} color={colors.textPrimary} />
+          <MaterialIcons name="refresh" size={20} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -85,7 +85,7 @@ export default function ReaderScreen() {
       {/* Error state */}
       {loadError ? (
         <View style={styles.errorWrap}>
-          <Ionicons name="alert-circle-outline" size={48} color={colors.textSecondary} />
+          <MaterialIcons name="error-outline" size={48} color={colors.textSecondary} />
           <Text style={[styles.errorText, { color: colors.textPrimary }]}>Failed to load content</Text>
           <TouchableOpacity
             style={[styles.retryBtn, { backgroundColor: colors.primary }]}

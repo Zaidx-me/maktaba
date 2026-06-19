@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useNavigation } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { BookRow } from '../../src/components/BookRow';
 import { SkeletonRow } from '../../src/components/SkeletonLoader';
 import { RequestBookModal } from '../../src/components/RequestBookModal';
@@ -52,8 +52,8 @@ export default function CollectionsScreen() {
   }, [nav]);
 
   const TABS: { key: Tab; label: string; icon: string }[] = [
-    { key: 'urdu', label: 'Urdu Books', icon: 'book' },
-    { key: 'pdf', label: 'PDF Books', icon: 'document-text' },
+    { key: 'urdu', label: 'Urdu Books', icon: 'menu-book' },
+    { key: 'pdf', label: 'PDF Books', icon: 'description' },
   ];
 
   const ROWS = useMemo<Record<Tab, RowDef[]>>(() => ({
@@ -139,7 +139,7 @@ export default function CollectionsScreen() {
               onPress={() => { setActiveTab(tab.key); setRowData({}); }}
               activeOpacity={0.7}
             >
-              <Ionicons name={tab.icon as any} size={16} color={isActive ? colors.background : colors.textSecondary} />
+              <MaterialIcons name={tab.icon as any} size={16} color={isActive ? colors.background : colors.textSecondary} />
               <Text style={[styles.tabLabel, { color: isActive ? colors.background : colors.textSecondary }, isActive && { fontWeight: '700' }]}>
                 {tab.label}
               </Text>
@@ -153,7 +153,7 @@ export default function CollectionsScreen() {
         onPress={() => setShowRequest(true)}
         activeOpacity={0.7}
       >
-        <Ionicons name="add-circle-outline" size={18} color={colors.textPrimary} />
+        <MaterialIcons name="add-circle-outline" size={18} color={colors.textPrimary} />
         <Text style={[styles.requestBtnText, { color: colors.textSecondary }]}>Can't find a book? Request it</Text>
       </TouchableOpacity>
     </View>

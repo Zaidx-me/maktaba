@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
 import { signInWithEmail, signUpWithEmail } from '../../src/services/auth';
@@ -81,7 +81,7 @@ export default function LoginScreen() {
         {/* Logo + Brand */}
         <View style={styles.brandSection}>
           <View style={[styles.logoCircle, { backgroundColor: colors.accentSoft }]}>
-            <Ionicons name="book" size={32} color={colors.accentBright} />
+            <MaterialIcons name="menu-book" size={32} color={colors.accentBright} />
           </View>
           <Text style={[styles.appName, { color: colors.textPrimary }]}>Zesho</Text>
           <Text style={[styles.tagline, { color: colors.textSecondary }]}>
@@ -93,7 +93,7 @@ export default function LoginScreen() {
         <View style={styles.formSection}>
           {isSignUp && (
             <View style={[styles.inputWrap, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
-              <Ionicons name="person-outline" size={18} color={colors.textMuted} />
+              <MaterialIcons name="person-outline" size={18} color={colors.textMuted} />
               <TextInput
                 style={[styles.input, { color: colors.textPrimary }]}
                 placeholder="Full name"
@@ -106,7 +106,7 @@ export default function LoginScreen() {
           )}
 
           <View style={[styles.inputWrap, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
-            <Ionicons name="mail-outline" size={18} color={colors.textMuted} />
+            <MaterialIcons name="mail-outline" size={18} color={colors.textMuted} />
             <TextInput
               style={[styles.input, { color: colors.textPrimary }]}
               placeholder="Email"
@@ -120,7 +120,7 @@ export default function LoginScreen() {
           </View>
 
           <View style={[styles.inputWrap, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
-            <Ionicons name="lock-closed-outline" size={18} color={colors.textMuted} />
+            <MaterialIcons name="lock-outline" size={18} color={colors.textMuted} />
             <TextInput
               style={[styles.input, { color: colors.textPrimary }]}
               placeholder="Password"
@@ -131,7 +131,7 @@ export default function LoginScreen() {
               autoCapitalize="none"
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={18} color={colors.textMuted} />
+              <MaterialIcons name={showPassword ? 'visibility-off' : 'visibility'} size={18} color={colors.textMuted} />
             </TouchableOpacity>
           </View>
 

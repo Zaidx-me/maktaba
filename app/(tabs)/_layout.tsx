@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/context/ThemeContext';
@@ -34,7 +34,7 @@ export default function TabsLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={22} color={color} />
+            <MaterialIcons name="home" size={22} color={color} />
           ),
         }}
       />
@@ -43,7 +43,7 @@ export default function TabsLayout() {
         options={{
           title: 'Category',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="grid" size={22} color={color} />
+            <MaterialIcons name="category" size={22} color={color} />
           ),
         }}
       />
@@ -52,7 +52,7 @@ export default function TabsLayout() {
         options={{
           title: 'Library',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="library" size={22} color={color} />
+            <MaterialIcons name="auto-stories" size={22} color={color} />
           ),
         }}
       />
@@ -61,7 +61,7 @@ export default function TabsLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={22} color={color} />
+            <MaterialIcons name="person-outline" size={22} color={color} />
           ),
         }}
       />

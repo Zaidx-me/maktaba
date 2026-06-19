@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
 import { getAllUserNotes, deleteNote, updateNote } from '../../src/services/books';
 import { Note } from '../../src/types';
@@ -105,10 +105,10 @@ export default function NotesScreen() {
             </Text>
             <View style={styles.noteActions}>
               <TouchableOpacity onPress={() => handleEdit(item)} style={styles.actionButton}>
-                <Ionicons name="pencil" size={16} color={colors.primary} />
+                <MaterialIcons name="edit" size={16} color={colors.primary} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.actionButton}>
-                <Ionicons name="trash-outline" size={16} color={colors.error} />
+                <MaterialIcons name="delete-outline" size={16} color={colors.error} />
               </TouchableOpacity>
             </View>
           </View>
@@ -124,7 +124,7 @@ export default function NotesScreen() {
           <Text style={[styles.title, { color: colors.textPrimary }]}>My Notes</Text>
         </View>
         <View style={styles.emptyContainer}>
-          <Ionicons name="pencil-outline" size={64} color={colors.textSecondary} />
+          <MaterialIcons name="edit" size={64} color={colors.textSecondary} />
           <Text style={[styles.emptyText, { color: colors.textPrimary }]}>Sign in to use Notes</Text>
           <Text style={[styles.emptySubtext, { color: colors.textSecondary }]}>Create an account to save notes on books</Text>
           <TouchableOpacity style={[styles.signInButton, { backgroundColor: colors.primary }]} onPress={() => router.push('/(auth)/login')}>
@@ -152,7 +152,7 @@ export default function NotesScreen() {
           contentContainerStyle={styles.list}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="pencil-outline" size={64} color={colors.textSecondary} />
+              <MaterialIcons name="edit" size={64} color={colors.textSecondary} />
               <Text style={[styles.emptyText, { color: colors.textPrimary }]}>No notes yet</Text>
               <Text style={[styles.emptySubtext, { color: colors.textSecondary }]}>Add notes from book detail pages</Text>
             </View>

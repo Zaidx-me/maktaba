@@ -4,7 +4,7 @@ import {
   PanResponder, Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Book } from '../types';
 import { Spacing, FontSize, BorderRadius, Shadows } from '../constants/theme';
 import { useTheme } from '../context/ThemeContext';
@@ -163,9 +163,9 @@ export function BookStack({ books, title }: BookStackProps) {
       </View>
 
       <View style={styles.hintRow}>
-        <Ionicons name="chevron-back" size={14} color={colors.textMuted} />
+        <MaterialIcons name="chevron-left" size={14} color={colors.textMuted} />
         <Text style={[styles.hintText, { color: colors.textMuted }]}>Swipe to explore</Text>
-        <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
+        <MaterialIcons name="chevron-right" size={14} color={colors.textMuted} />
       </View>
     </View>
   );
