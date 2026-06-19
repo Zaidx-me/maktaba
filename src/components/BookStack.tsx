@@ -20,16 +20,7 @@ interface BookStackProps {
   title?: string;
 }
 
-function arePropsEqual(prev: BookStackProps, next: BookStackProps): boolean {
-  if (prev.title !== next.title) return false;
-  if (prev.books.length !== next.books.length) return false;
-  for (let i = 0; i < prev.books.length; i++) {
-    if (prev.books[i].id !== next.books[i].id) return false;
-  }
-  return true;
-}
-
-export const BookStack = React.memo(function BookStack({ books, title }: BookStackProps) {
+export function BookStack({ books, title }: BookStackProps) {
   const { colors } = useTheme();
   const router = useRouter();
   const stack = useMemo(() => books.slice(0, 10), [books]);
@@ -166,10 +157,6 @@ export const BookStack = React.memo(function BookStack({ books, title }: BookSta
                 },
               ]}
             >
-              <View style={styles.cardInner}>
-                <View style={[styles.cover, { backgroundColor: colors.surfaceElevated }]} />
-                <View style={styles.cardBody} />
-              </View>
             </View>
           );
         })}
@@ -182,7 +169,7 @@ export const BookStack = React.memo(function BookStack({ books, title }: BookSta
       </View>
     </View>
   );
-}, arePropsEqual);
+}
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -217,21 +204,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     elevation: 0,
   },
-  cardInner: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  cover: {
-    width: CARD_WIDTH * 0.38,
-    height: '100%',
-  },
-  cardBody: {
-    flex: 1,
-    padding: Spacing.md,
-    borderLeftWidth: 1,
-    justifyContent: 'center',
-  },
-
   hintRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: Spacing.xs,
