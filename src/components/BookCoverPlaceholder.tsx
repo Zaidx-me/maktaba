@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../context/ThemeContext';
+import { BorderRadius } from '../constants/theme';
 
 interface BookCoverPlaceholderProps {
   title: string;
@@ -30,16 +32,20 @@ function hashString(str: string): number {
 }
 
 export function BookCoverPlaceholder({ title, width, height }: BookCoverPlaceholderProps) {
+  const { colors } = useTheme();
   const idx = hashString(title) % CINEMATIC_GRADIENTS.length;
   const [startColor, endColor] = CINEMATIC_GRADIENTS[idx]!;
 
   return (
-    <LinearGradient
-      colors={[startColor, endColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0.5, y: 1 }}
-      style={[styles.container, { width, height }]}
-    />
+    <View style={[styles.container, { width, height, borderRadius: BorderRadius.lg }]}>
+      <LinearGradient
+        colors={[startColor, endColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={styles.gradient}
+      />
+      <View style={[styles.spine, { backgroundColor: colors.glassLight }]} />
+    </View>
   );
 }
 
@@ -56,9 +62,20 @@ export function BookSkeleton({ width, height }: { width: number; height: number 
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  gradient: {
+    width: '100%',
+    height: '100%',
+  },
+  spine: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 3,
   },
   skeleton: {
-    borderRadius: 4,
+    borderRadius: BorderRadius.lg,
   },
 });
