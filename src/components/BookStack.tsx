@@ -1,14 +1,14 @@
 import React, { useRef, useMemo, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, Image, Animated,
-  PanResponder, Dimensions, TouchableOpacity,
-  Platform,
+  View, Text, StyleSheet, Animated,
+  PanResponder, Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Book } from '../types';
-import { Spacing, FontSize, BorderRadius } from '../constants/theme';
+import { Spacing, FontSize, BorderRadius, Shadows } from '../constants/theme';
 import { useTheme } from '../context/ThemeContext';
+import { HeroCard } from './HeroCard';
 
 const SWIPE_THRESHOLD = 120;
 const CARD_WIDTH = Dimensions.get('window').width - Spacing.xxl * 2;
@@ -20,7 +20,16 @@ interface BookStackProps {
   title?: string;
 }
 
-export function BookStack({ books, title }: BookStackProps) {
+function arePropsEqual(prev: BookStackProps, next: BookStackProps): boolean {
+  if (prev.title !== next.title) return false;
+  if (prev.books.length !== next.books.length) return false;
+  for (let i = 0; i < prev.books.length; i++) {
+    if (prev.books[i].id !== next.books[i].id) return false;
+  }
+  return true;
+}
+
+export const BookStack = React.memo(function BookStack({ books, title }: BookStackProps) {
   const { colors } = useTheme();
   const router = useRouter();
   const stack = useMemo(() => books.slice(0, 10), [books]);
@@ -119,8 +128,8 @@ export function BookStack({ books, title }: BookStackProps) {
                 style={[
                   styles.card,
                   {
-                    backgroundColor: colors.surfaceElevated,
-                    borderColor: colors.border,
+                    backgroundColor: 'transparent',
+                    borderColor: 'transparent',
                     zIndex: visibleCards.length - i,
                     transform: [
                       { translateX: pan.x },
@@ -131,41 +140,12 @@ export function BookStack({ books, title }: BookStackProps) {
                 ]}
                 {...panResponder.panHandlers}
               >
-                <TouchableOpacity
-                  activeOpacity={0.95}
+                <HeroCard
+                  label="NOW READING"
+                  title={book.title}
+                  description={book.description?.replace(/<[^>]*>/g, '')}
                   onPress={() => cardPress(book)}
-                  style={styles.cardInner}
-                >
-                  <Image source={{ uri: book.thumbnail }} style={styles.cover} />
-                  <View style={[styles.cardBody, { borderLeftColor: colors.border }]}>
-                    <Text style={[styles.cardTitle, { color: colors.textPrimary }]} numberOfLines={2}>
-                      {book.title}
-                    </Text>
-                    {book.authors?.length > 0 && (
-                      <Text style={[styles.cardAuthor, { color: colors.textSecondary }]} numberOfLines={1}>
-                        {book.authors.join(', ')}
-                      </Text>
-                    )}
-                    {book.description && (
-                      <Text style={[styles.cardDesc, { color: colors.textMuted }]} numberOfLines={3}>
-                        {book.description.replace(/<[^>]*>/g, '')}
-                      </Text>
-                    )}
-                    <View style={styles.cardFooter}>
-                      {book.averageRating > 0 && (
-                        <View style={styles.ratingRow}>
-                          <Ionicons name="star" size={13} color="#f5a623" />
-                          <Text style={[styles.ratingText, { color: colors.textSecondary }]}>
-                            {book.averageRating.toFixed(1)}
-                          </Text>
-                        </View>
-                      )}
-                      {book.pageCount > 0 && (
-                        <Text style={[styles.pages, { color: colors.textMuted }]}>{book.pageCount} pages</Text>
-                      )}
-                    </View>
-                  </View>
-                </TouchableOpacity>
+                />
               </Animated.View>
             );
           }
@@ -202,7 +182,7 @@ export function BookStack({ books, title }: BookStackProps) {
       </View>
     </View>
   );
-}
+}, arePropsEqual);
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -231,15 +211,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-      },
-      android: { elevation: 6 },
-    }),
+    ...Shadows.elevated,
   },
   cardBack: {
     shadowOpacity: 0,
@@ -259,30 +231,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
     justifyContent: 'center',
   },
-  cardTitle: {
-    fontSize: FontSize.bodyMdMedium,
-    fontWeight: '700',
-    lineHeight: 21,
-    marginBottom: 4,
-  },
-  cardAuthor: {
-    fontSize: FontSize.sm,
-    marginBottom: Spacing.sm,
-  },
-  cardDesc: {
-    fontSize: FontSize.caption,
-    lineHeight: 18,
-    flex: 1,
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    marginTop: Spacing.sm,
-  },
-  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  ratingText: { fontSize: FontSize.sm, fontWeight: '500' },
-  pages: { fontSize: FontSize.xs },
 
   hintRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
