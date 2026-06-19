@@ -6,9 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../src/context/ThemeContext';
-import { Spacing, FontSize, BorderRadius } from '../src/constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../src/constants/theme';
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+const { width: SCREEN_W } = Dimensions.get('window');
 
 const SLIDES = [
   {
@@ -21,7 +21,7 @@ const SLIDES = [
     id: '2',
     icon: 'book-outline' as const,
     title: 'Read Anywhere',
-    desc: 'In-app reader with page-flipping UI. Download or read online — your choice.',
+    desc: 'In-app reader with page-flipping UI. Download or read online \u2014 your choice.',
   },
   {
     id: '3',
@@ -57,8 +57,8 @@ export default function OnboardingScreen() {
 
   const renderItem = ({ item }: { item: typeof SLIDES[0] }) => (
     <View style={[styles.slide, { width: SCREEN_W }]}>
-      <View style={[styles.iconWrap, { backgroundColor: colors.surfaceElevated }]}>
-        <Ionicons name={item.icon} size={64} color={colors.textPrimary} />
+      <View style={[styles.iconWrap, { backgroundColor: colors.accentSoft }]}>
+        <Ionicons name={item.icon} size={56} color={colors.accentBright} />
       </View>
       <Text style={[styles.slideTitle, { color: colors.textPrimary }]}>{item.title}</Text>
       <Text style={[styles.slideDesc, { color: colors.textSecondary }]}>{item.desc}</Text>
@@ -67,12 +67,10 @@ export default function OnboardingScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      {/* Skip button */}
       <TouchableOpacity style={styles.skipBtn} onPress={handleSkip} activeOpacity={0.7}>
         <Text style={[styles.skipText, { color: colors.textMuted }]}>Skip</Text>
       </TouchableOpacity>
 
-      {/* Slides */}
       <View style={styles.slidesWrap}>
         <FlatList
           ref={flatListRef}
@@ -88,23 +86,34 @@ export default function OnboardingScreen() {
         />
       </View>
 
-      {/* Dots + Button */}
       <View style={styles.bottomSection}>
         <View style={styles.dots}>
           {SLIDES.map((_, i) => {
             const inputRange = [(i - 1) * SCREEN_W, i * SCREEN_W, (i + 1) * SCREEN_W];
             const dotWidth = scrollX.interpolate({ inputRange, outputRange: [8, 24, 8], extrapolate: 'clamp' });
             const dotOpacity = scrollX.interpolate({ inputRange, outputRange: [0.3, 1, 0.3], extrapolate: 'clamp' });
+            const isActive = i === currentIndex;
             return (
               <Animated.View
                 key={i}
-                style={[styles.dot, { width: dotWidth, opacity: dotOpacity, backgroundColor: colors.buttonPrimary }]}
+                style={[
+                  styles.dot,
+                  {
+                    width: dotWidth,
+                    opacity: dotOpacity,
+                    backgroundColor: isActive ? colors.accentBright : colors.border,
+                  },
+                ]}
               />
             );
           })}
         </View>
 
-        <TouchableOpacity style={[styles.nextBtn, { backgroundColor: colors.buttonPrimary }]} onPress={handleNext} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={[styles.nextBtn, { backgroundColor: colors.buttonPrimary }]}
+          onPress={handleNext}
+          activeOpacity={0.8}
+        >
           <Text style={[styles.nextText, { color: colors.buttonPrimaryText }]}>
             {currentIndex === SLIDES.length - 1 ? 'Get Started' : 'Next'}
           </Text>
@@ -117,16 +126,67 @@ export default function OnboardingScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  skipBtn: { alignSelf: 'flex-end', paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md },
-  skipText: { fontSize: FontSize.bodyMd, fontWeight: '500' },
+  skipBtn: {
+    alignSelf: 'flex-end',
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+  },
+  skipText: {
+    fontSize: FontSize.bodyMd,
+    fontWeight: FontWeight.medium,
+  },
   slidesWrap: { flex: 1, justifyContent: 'center' },
-  slide: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.xxxl },
-  iconWrap: { width: 130, height: 130, borderRadius: 65, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.xxxl },
-  slideTitle: { fontSize: FontSize.heading2, fontWeight: '800', textAlign: 'center', marginBottom: Spacing.md, letterSpacing: -0.5 },
-  slideDesc: { fontSize: FontSize.bodyMd, textAlign: 'center', lineHeight: 24, paddingHorizontal: Spacing.lg },
-  bottomSection: { paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.xl },
-  dots: { flexDirection: 'row', justifyContent: 'center', gap: Spacing.sm, marginBottom: Spacing.xl },
-  dot: { height: 8, borderRadius: 4 },
-  nextBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, paddingVertical: Spacing.md + 4, borderRadius: BorderRadius.lg },
-  nextText: { fontSize: FontSize.bodyMd, fontWeight: '700' },
+  slide: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.xxxl,
+  },
+  iconWrap: {
+    width: 120,
+    height: 120,
+    borderRadius: BorderRadius.xxxl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.xxxl,
+  },
+  slideTitle: {
+    fontSize: FontSize.heading2,
+    fontWeight: FontWeight.extrabold,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
+    letterSpacing: -0.5,
+  },
+  slideDesc: {
+    fontSize: FontSize.bodyMd,
+    textAlign: 'center',
+    lineHeight: 24,
+    paddingHorizontal: Spacing.lg,
+  },
+  bottomSection: {
+    paddingHorizontal: Spacing.xxl,
+    paddingBottom: Spacing.xl,
+  },
+  dots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.xl,
+  },
+  dot: {
+    height: 8,
+    borderRadius: BorderRadius.full,
+  },
+  nextBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md + 4,
+    borderRadius: BorderRadius.lg,
+    ...Shadows.elevated,
+  },
+  nextText: {
+    fontSize: FontSize.bodyMd,
+    fontWeight: FontWeight.bold,
+  },
 });
