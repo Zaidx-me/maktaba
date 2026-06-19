@@ -240,7 +240,7 @@ export default function HomeScreen() {
                   {continueReadingBooks.map((book) => (
                     <TouchableOpacity
                       key={book.id}
-                      style={[s.continueCard, { backgroundColor: colors.white }]}
+                      style={[s.continueCard, { backgroundColor: colors.surfaceElevated }]}
                       onPress={() => router.push(`/book/${book.id}`)}
                       activeOpacity={0.7}
                     >
