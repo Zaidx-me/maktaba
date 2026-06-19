@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
   View, Text, StyleSheet, FlatList, ActivityIndicator,
-  TouchableOpacity, TextInput, RefreshControl,
+  TouchableOpacity, RefreshControl,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { BookCard } from '../../src/components/BookCard';
-import { Spacing, FontSize, BorderRadius } from '../../src/constants/theme';
+import { SearchBar } from '../../src/components/SearchBar';
+import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
 import { Book } from '../../src/types';
 import { getAllUrduBooks, searchUrduBooks, getUrduBooksByCategory } from '../../src/services/urduBooks';
 import { getAllPdfBooks, searchPdfBooks, getPdfBooksByMainCategory } from '../../src/services/pdfBooksFree';
@@ -208,9 +209,10 @@ export default function ShelfCategoryScreen() {
     if (error) {
       return (
         <View style={styles.emptyWrap}>
-          <Text style={[styles.emptyText, { color: colors.coolSlate }]}>{error}</Text>
-          <TouchableOpacity onPress={loadInitial}>
-            <Text style={[styles.retryText, { color: colors.textPrimary }]}>Retry</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>{error}</Text>
+          <TouchableOpacity onPress={loadInitial} style={[styles.retryBtn, { backgroundColor: colors.accentSoft }]}>
+            <Text style={[styles.retryText, { color: colors.accentBright }]}>Retry</Text>
           </TouchableOpacity>
         </View>
       );
@@ -218,7 +220,7 @@ export default function ShelfCategoryScreen() {
     return (
       <View style={styles.emptyWrap}>
         <Ionicons name="book-outline" size={48} color={colors.textMuted} />
-        <Text style={[styles.emptyText, { color: colors.coolSlate }]}>No books found</Text>
+        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No books found</Text>
       </View>
     );
   };
@@ -245,17 +247,12 @@ export default function ShelfCategoryScreen() {
       </View>
 
       {searchMode && (
-        <View style={[styles.searchBar, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
-          <Ionicons name="search" size={16} color={colors.textMuted} />
-          <TextInput
-            style={[styles.searchInput, { color: colors.textPrimary }]}
-            placeholder="Search in this category..."
-            placeholderTextColor={colors.textMuted}
+        <View style={styles.searchBarWrap}>
+          <SearchBar
             value={searchQuery}
             onChangeText={setSearchQuery}
+            placeholder="Search in this category..."
             onSubmitEditing={handleSearch}
-            returnKeyType="search"
-            autoFocus
           />
         </View>
       )}
@@ -302,7 +299,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.sm,
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   backBtn: {
     width: 40,
@@ -316,27 +313,16 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: FontSize.heading5,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
     letterSpacing: -0.5,
   },
   count: {
     fontSize: FontSize.xs,
     marginTop: 2,
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: Spacing.xxl,
-    marginTop: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.md,
-    height: 40,
-    gap: Spacing.xs,
-    borderWidth: 1,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: FontSize.bodySm,
+  searchBarWrap: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.sm,
   },
   grid: {
     padding: Spacing.lg,
@@ -347,7 +333,7 @@ const styles = StyleSheet.create({
   },
   bookItem: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: Spacing.xs,
     marginBottom: Spacing.lg,
   },
   loadingWrap: {
@@ -366,7 +352,7 @@ const styles = StyleSheet.create({
   skeletonCard: {
     width: '100%',
     aspectRatio: 0.69,
-    borderRadius: BorderRadius.sm,
+    borderRadius: BorderRadius.md,
   },
   footer: {
     paddingVertical: Spacing.xl,
@@ -379,10 +365,16 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: FontSize.bodyMd,
-    fontWeight: '400',
+    fontWeight: FontWeight.regular,
+  },
+  retryBtn: {
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    marginTop: Spacing.xs,
   },
   retryText: {
     fontSize: FontSize.bodyMd,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
   },
 });
