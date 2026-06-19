@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BookCard } from '../src/components/BookCard';
-import { Book, UserBook } from '../src/types';
+import { Book } from '../src/types';
 import { useTheme } from '../src/context/ThemeContext';
 import { useAuth } from '../src/context/AuthContext';
 import { getUserBooks } from '../src/services/localDb';
@@ -55,7 +55,7 @@ export default function FavoritesScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Favorites</Text>
         <View style={styles.backBtn} />
@@ -63,10 +63,12 @@ export default function FavoritesScreen() {
 
       {favorites.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="heart-outline" size={64} color={colors.textSecondary} />
+          <View style={[styles.emptyIconContainer, { backgroundColor: colors.accentSoft }]}>
+            <Ionicons name="heart-outline" size={40} color={colors.accent} />
+          </View>
           <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>No favorites yet</Text>
           <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-            Tap the heart icon on any book to add it here
+            Tap the heart icon on any book to save it here
           </Text>
         </View>
       ) : (
@@ -76,6 +78,7 @@ export default function FavoritesScreen() {
           numColumns={2}
           contentContainerStyle={styles.grid}
           columnWrapperStyle={styles.row}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.bookItem}>
               <BookCard book={item} />
@@ -93,7 +96,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: Spacing.xxl,
+    paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
   },
   backBtn: {
@@ -103,8 +106,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: FontSize.xl,
+    fontSize: FontSize.heading5,
     fontWeight: '700',
+    letterSpacing: -0.3,
   },
   grid: {
     paddingHorizontal: Spacing.xxl,
@@ -121,16 +125,25 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.xxl,
+    paddingHorizontal: Spacing.xxxl,
+  },
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.xxl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
   },
   emptyTitle: {
-    fontSize: FontSize.xl,
-    fontWeight: '600',
-    marginTop: Spacing.lg,
+    fontSize: FontSize.heading4,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+    marginBottom: Spacing.sm,
   },
   emptySubtitle: {
-    fontSize: FontSize.md,
-    marginTop: Spacing.sm,
+    fontSize: FontSize.bodyMd,
     textAlign: 'center',
+    lineHeight: 22,
   },
 });
