@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Dimensions, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../context/ThemeContext';
-import { BorderRadius, Spacing } from '../constants/theme';
+import { BorderRadius, Spacing, Shadows } from '../constants/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -13,8 +13,8 @@ function Shimmer({ style }: { style: any }) {
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(anim, { toValue: 1, duration: 1000, useNativeDriver: true }),
-        Animated.timing(anim, { toValue: 0, duration: 1000, useNativeDriver: true }),
+        Animated.timing(anim, { toValue: 1, duration: 1200, useNativeDriver: true }),
+        Animated.timing(anim, { toValue: 0, duration: 1200, useNativeDriver: true }),
       ])
     );
     loop.start();
@@ -23,7 +23,7 @@ function Shimmer({ style }: { style: any }) {
 
   const opacity = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.3, 0.7],
+    outputRange: [0.4, 0.8],
   });
 
   return (
@@ -46,13 +46,13 @@ interface SkeletonLoaderProps {
 export function SkeletonLoader({ count = 6, columns = 2 }: SkeletonLoaderProps) {
   const { colors } = useTheme();
   const cardWidth = (width - Spacing.xl * 2 - Spacing.sm * (columns - 1)) / columns;
-  const cardHeight = cardWidth * 1.35;
+  const cardHeight = cardWidth * 1.4;
 
   return (
     <View style={styles.container}>
       {Array.from({ length: count }).map((_, index) => (
         <View key={index} style={[styles.card, { width: cardWidth }]}>
-          <Shimmer style={[styles.image, { borderRadius: BorderRadius.md, height: cardHeight, backgroundColor: colors.surface }]} />
+          <Shimmer style={[styles.imageContainer, { width: cardWidth, height: cardHeight, borderRadius: BorderRadius.lg, backgroundColor: colors.surface, ...Shadows.card }]} />
           <Shimmer style={[styles.textBlock, { backgroundColor: colors.surface }]} />
           <Shimmer style={[styles.textBlockSmall, { backgroundColor: colors.surface }]} />
         </View>
@@ -64,7 +64,7 @@ export function SkeletonLoader({ count = 6, columns = 2 }: SkeletonLoaderProps) 
 export function SkeletonRow({ count = 4 }: { count?: number }) {
   const { colors } = useTheme();
   const cardWidth = 130;
-  const cardHeight = cardWidth * 1.35;
+  const cardHeight = cardWidth * 1.4;
 
   return (
     <View style={styles.rowContainer}>
@@ -72,7 +72,7 @@ export function SkeletonRow({ count = 4 }: { count?: number }) {
       <View style={styles.row}>
         {Array.from({ length: count }).map((_, index) => (
           <View key={index} style={[styles.rowCard, { width: cardWidth }]}>
-            <Shimmer style={[styles.image, { borderRadius: BorderRadius.md, height: cardHeight, backgroundColor: colors.surface }]} />
+            <Shimmer style={[styles.imageContainer, { width: cardWidth, height: cardHeight, borderRadius: BorderRadius.lg, backgroundColor: colors.surface, ...Shadows.card }]} />
             <Shimmer style={[styles.textBlock, { backgroundColor: colors.surface }]} />
             <Shimmer style={[styles.textBlockSmall, { backgroundColor: colors.surface }]} />
           </View>
@@ -101,19 +101,19 @@ const styles = StyleSheet.create({
   rowTitle: {
     height: 16,
     width: '40%',
-    borderRadius: BorderRadius.xs,
+    borderRadius: BorderRadius.sm,
     marginBottom: Spacing.md,
     marginHorizontal: Spacing.xl,
   },
   card: {
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
   },
   rowCard: {
     marginRight: Spacing.sm,
   },
-  image: {
+  imageContainer: {
     width: '100%',
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.sm,
     overflow: 'hidden',
   },
   textBlock: {
