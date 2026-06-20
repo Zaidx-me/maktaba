@@ -14,6 +14,7 @@ import { Book } from '../../src/types';
 import { useTheme } from '../../src/context/ThemeContext';
 import { getAllUrduBooks, getUrduBooksByCategory } from '../../src/services/urduBooks';
 import { getAllPdfBooks } from '../../src/services/pdfBooksFree';
+import { getPopularAuthors, AuthorInfo } from '../../src/services/authorIndex';
 import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
 import { getDismissedNotifications } from '../../src/services/localDb';
 
@@ -25,13 +26,14 @@ interface HomeState {
   poetryBooks: Book[];
   funnyBooks: Book[];
   pdfNovels: Book[];
+  popularWriters: AuthorInfo[];
   ready: boolean;
   refreshing: boolean;
   hasUnread: boolean;
 }
 
 type HomeAction =
-  | { type: 'SET_BOOKS'; hero: Book[]; islamic: Book[]; novels: Book[]; history: Book[]; poetry: Book[]; funny: Book[]; pdf: Book[] }
+  | { type: 'SET_BOOKS'; hero: Book[]; islamic: Book[]; novels: Book[]; history: Book[]; poetry: Book[]; funny: Book[]; pdf: Book[]; writers: AuthorInfo[] }
   | { type: 'SET_REFRESHING'; refreshing: boolean }
   | { type: 'SET_UNREAD'; hasUnread: boolean };
 
@@ -47,6 +49,7 @@ function homeReducer(state: HomeState, action: HomeAction): HomeState {
         poetryBooks: action.poetry,
         funnyBooks: action.funny,
         pdfNovels: action.pdf,
+        popularWriters: action.writers,
         ready: true,
       };
     case 'SET_REFRESHING':
@@ -66,6 +69,7 @@ const initialState: HomeState = {
   poetryBooks: [],
   funnyBooks: [],
   pdfNovels: [],
+  popularWriters: [],
   ready: false,
   refreshing: false,
   hasUnread: false,
@@ -128,6 +132,7 @@ export default function HomeScreen() {
       ),
       funny: addUnique(getUrduBooksByCategory('Funny Books', 12)),
       pdf: addUnique(allPdf.filter(b => b.categories?.includes('Urdu Novels')).slice(0, 15)),
+      writers: getPopularAuthors(15),
     });
 
     Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
@@ -305,6 +310,44 @@ export default function HomeScreen() {
               onSeeAll={() => router.push({ pathname: '/shelf/[category]', params: { category: 'Urdu Novels', title: 'PDF Novels', query: 'Urdu novels PDF' } })}
             />
           )}
+
+          {/* Popular Writers */}
+          {state.popularWriters.length > 0 && (
+            <View style={s.section}>
+              <View style={[s.sectionHeader, { paddingHorizontal: Spacing.xxl }]}>
+                <Text style={[s.sectionTitle, { color: colors.textPrimary }]}>Popular Writers</Text>
+                <TouchableOpacity onPress={() => router.push('/shelf')}>
+                  <Text style={[s.seeAll, { color: colors.accent }]}>See All</Text>
+                </TouchableOpacity>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingLeft: Spacing.xxl, gap: Spacing.lg }}
+              >
+                {state.popularWriters.map((author) => (
+                  <TouchableOpacity
+                    key={author.name}
+                    style={s.writerCard}
+                    activeOpacity={0.7}
+                    onPress={() => router.push({ pathname: '/author/[name]', params: { name: author.name } })}
+                  >
+                    <View style={[s.writerAvatar, { backgroundColor: colors.card }]}>
+                      <Text style={[s.writerInitial, { color: colors.accent }]}>
+                        {author.name.charAt(0)}
+                      </Text>
+                    </View>
+                    <Text style={[s.writerName, { color: colors.textPrimary }]} numberOfLines={1}>
+                      {author.name}
+                    </Text>
+                    <Text style={[s.writerBookCount, { color: colors.textSecondary }]}>
+                      {author.bookCount} books
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
         </Animated.View>
       </ScrollView>
 
@@ -428,5 +471,29 @@ const s = StyleSheet.create({
   categoryLabel: {
     fontSize: FontSize.bodyMdMedium,
     fontWeight: FontWeight.medium,
+  },
+  writerCard: {
+    alignItems: 'center',
+    width: 76,
+    gap: Spacing.xs,
+  },
+  writerAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  writerInitial: {
+    fontSize: FontSize.heading3,
+    fontWeight: FontWeight.bold,
+  },
+  writerName: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.medium,
+    textAlign: 'center',
+  },
+  writerBookCount: {
+    fontSize: FontSize.xs,
   },
 });
