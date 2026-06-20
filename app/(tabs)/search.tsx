@@ -9,9 +9,21 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { BookCard } from '../../src/components/BookCard';
 import { RequestBookModal } from '../../src/components/RequestBookModal';
 import { Book } from '../../src/types';
-import { searchBooks } from '../../src/services/googleBooks';
+import { searchUrduBooks } from '../../src/services/urduBooks';
+import { searchPdfBooks } from '../../src/services/pdfBooksFree';
 import { Spacing, FontSize, BorderRadius } from '../../src/constants/theme';
 import { useTheme } from '../../src/context/ThemeContext';
+
+function searchAllBooks(query: string, limit: number = 30): Book[] {
+  const urdu = searchUrduBooks(query, limit);
+  const pdf = searchPdfBooks(query, limit);
+  const seen = new Set<string>();
+  const result: Book[] = [];
+  for (const b of [...urdu, ...pdf]) {
+    if (!seen.has(b.id)) { seen.add(b.id); result.push(b); }
+  }
+  return result.slice(0, limit);
+}
 
 export default function SearchScreen() {
   const insets = useSafeAreaInsets();
@@ -32,7 +44,7 @@ export default function SearchScreen() {
     setLoading(true);
     setSearched(true);
     try {
-      const books = await searchBooks(searchQuery);
+      const books = searchAllBooks(searchQuery);
       setResults(books);
     } catch {}
     setLoading(false);

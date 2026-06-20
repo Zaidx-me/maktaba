@@ -11,7 +11,6 @@ import { SkeletonRow } from '../../src/components/SkeletonLoader';
 import { RequestBookModal } from '../../src/components/RequestBookModal';
 import { Book } from '../../src/types';
 import { useTheme } from '../../src/context/ThemeContext';
-import { getCachedBooks, preloadBooks } from '../../src/services/bookCache';
 import { getUrduBooksByMainCategory, getUrduMainCategories } from '../../src/services/urduBooks';
 import { getPdfBooksByMainCategory, getPdfTopCategories } from '../../src/services/pdfBooksFree';
 import { Spacing, FontSize, BorderRadius } from '../../src/constants/theme';
@@ -76,9 +75,7 @@ export default function CollectionsScreen() {
         currentRows.map(row =>
           activeTab === 'urdu'
             ? Promise.resolve(getUrduBooksByMainCategory(row.query, 20))
-            : activeTab === 'pdf'
-            ? Promise.resolve(getPdfBooksByMainCategory(row.query, 20))
-            : getCachedBooks(row.key, row.query, 20)
+            : Promise.resolve(getPdfBooksByMainCategory(row.query, 20))
         )
       );
       const data: Record<string, Book[]> = {};
@@ -95,7 +92,6 @@ export default function CollectionsScreen() {
   }, [activeTab, currentRows]);
 
   useEffect(() => {
-    preloadBooks();
     loadData();
   }, [loadData]);
 

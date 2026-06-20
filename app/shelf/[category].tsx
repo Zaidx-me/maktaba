@@ -9,29 +9,42 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { BookCard } from '../../src/components/BookCard';
 import { SearchBar } from '../../src/components/SearchBar';
-import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
+import { Spacing, FontSize, FontWeight, BorderRadius } from '../../src/constants/theme';
 import { Book } from '../../src/types';
-import { getAllUrduBooks, searchUrduBooks, getUrduBooksByCategory } from '../../src/services/urduBooks';
+import { getAllUrduBooks, searchUrduBooks, getUrduBooksByCategory, getUrduBooksByMainCategory } from '../../src/services/urduBooks';
 import { getAllPdfBooks, searchPdfBooks, getPdfBooksByMainCategory } from '../../src/services/pdfBooksFree';
-import { searchBooks } from '../../src/services/googleBooks';
 
 const PAGE_SIZE = 30;
 
-const CATEGORY_MAP: Record<string, { source: 'urdu_cat' | 'pdf_cat' | 'google'; urduCat?: string; pdfCat?: string; googleQuery: string }> = {
-  famous: { source: 'google', googleQuery: 'famous classic books' },
-  trending_now: { source: 'google', googleQuery: 'trending now 2025' },
-  islamic: { source: 'urdu_cat', urduCat: 'Islamic Books', pdfCat: 'Islamic Books', googleQuery: 'Islamic books' },
-  urdu_novels: { source: 'urdu_cat', urduCat: 'Urdu Novels', googleQuery: 'Urdu novels' },
-  history: { source: 'urdu_cat', urduCat: 'History Books', pdfCat: 'History', googleQuery: 'history biography' },
-  poetry: { source: 'urdu_cat', urduCat: 'Poetry Books', googleQuery: 'poetry literature' },
-  funny: { source: 'urdu_cat', urduCat: 'Funny Books', googleQuery: 'funny humor' },
-  pdf_novels: { source: 'pdf_cat', pdfCat: 'Urdu Novels', googleQuery: 'Urdu novels PDF' },
-  biography: { source: 'urdu_cat', urduCat: 'Biography', googleQuery: 'biography' },
-  tasawwaf: { source: 'urdu_cat', urduCat: 'Tasawwaf', googleQuery: 'tasawwaf sufi' },
-  travelogue: { source: 'urdu_cat', urduCat: 'Travelogue', googleQuery: 'travelogue' },
-  imran: { source: 'urdu_cat', urduCat: 'Imran Series', googleQuery: 'Imran Series' },
-  translate: { source: 'urdu_cat', urduCat: 'Translate Books', googleQuery: 'translated books' },
-};
+function searchLocal(query: string, limit: number): Book[] {
+  const urdu = searchUrduBooks(query, limit);
+  const pdf = searchPdfBooks(query, limit);
+  const seen = new Set<string>();
+  const result: Book[] = [];
+  for (const b of [...urdu, ...pdf]) {
+    if (!seen.has(b.id)) { seen.add(b.id); result.push(b); }
+  }
+  return result.slice(0, limit);
+}
+
+function loadBooksByKey(category: string, query: string, limit: number): Book[] {
+  // Try exact category match first (most reliable)
+  const urduByCat = getUrduBooksByCategory(category, limit);
+  if (urduByCat.length > 0) return urduByCat;
+
+  // Try main category match (for shelf tab categories like "Islamic Books")
+  const urduByMain = getUrduBooksByMainCategory(category, limit);
+  if (urduByMain.length > 0) return urduByMain;
+
+  // Try PDF categories
+  const pdfByMain = getPdfBooksByMainCategory(category, limit);
+  if (pdfByMain.length > 0) return pdfByMain;
+
+  // Fall back to text search using query
+  if (query) return searchLocal(query, limit);
+
+  return [];
+}
 
 export default function ShelfCategoryScreen() {
   const { category, title, query } = useLocalSearchParams<{
@@ -61,42 +74,6 @@ export default function ShelfCategoryScreen() {
     loadInitial();
   }, [category, query]);
 
-  const catConfig = CATEGORY_MAP[category || ''] || null;
-
-  const loadBooksForCategory = (limit: number): Book[] => {
-    if (!catConfig) return [];
-
-    if (catConfig.source === 'urdu_cat') {
-      const seen = new Set<string>();
-      const result: Book[] = [];
-      if (catConfig.urduCat) {
-        for (const b of getUrduBooksByCategory(catConfig.urduCat, limit * 2)) {
-          if (!seen.has(b.id)) { seen.add(b.id); result.push(b); }
-        }
-      }
-      if (catConfig.pdfCat) {
-        for (const b of getAllPdfBooks().filter(b => b.categories?.includes(catConfig.pdfCat!))) {
-          if (result.length >= limit) break;
-          if (!seen.has(b.id)) { seen.add(b.id); result.push(b); }
-        }
-      }
-      return result.slice(0, limit);
-    }
-
-    if (catConfig.source === 'pdf_cat') {
-      const seen = new Set<string>();
-      const result: Book[] = [];
-      if (catConfig.pdfCat) {
-        for (const b of getAllPdfBooks().filter(b => b.categories?.includes(catConfig.pdfCat!))) {
-          if (!seen.has(b.id)) { seen.add(b.id); result.push(b); }
-        }
-      }
-      return result.slice(0, limit);
-    }
-
-    return [];
-  };
-
   const loadInitial = async () => {
     if (!mountedRef.current) return;
     setLoading(true);
@@ -106,26 +83,12 @@ export default function ShelfCategoryScreen() {
 
     try {
       if (searchMode && searchQuery) {
-        const results = await performSearch(searchQuery);
+        const results = searchLocal(searchQuery, PAGE_SIZE);
         if (mountedRef.current) setBooks(results);
-      } else if (catConfig) {
-        if (catConfig.source === 'google') {
-          const q = query || catConfig.googleQuery;
-          const results = await searchBooks(q, PAGE_SIZE);
-          if (mountedRef.current) setBooks(results.filter(b => b.thumbnail));
-        } else {
-          const results = loadBooksForCategory(PAGE_SIZE);
-          if (mountedRef.current) setBooks(results);
-          setHasMore(results.length >= PAGE_SIZE);
-        }
-      } else if (query) {
-        const results = await searchBooks(query, PAGE_SIZE);
-        if (mountedRef.current) setBooks(results.filter(b => b.thumbnail));
-      } else if (title) {
-        const results = await searchBooks(title, PAGE_SIZE);
-        if (mountedRef.current) setBooks(results.filter(b => b.thumbnail));
       } else {
-        if (mountedRef.current) setBooks([]);
+        const results = loadBooksByKey(category || '', query || '', PAGE_SIZE);
+        if (mountedRef.current) setBooks(results);
+        setHasMore(results.length >= PAGE_SIZE);
       }
     } catch {
       if (mountedRef.current) setError('Failed to load books');
@@ -134,40 +97,17 @@ export default function ShelfCategoryScreen() {
     if (mountedRef.current) setLoading(false);
   };
 
-  const performSearch = async (q: string): Promise<Book[]> => {
-    if (catConfig?.source === 'urdu_cat') {
-      const urduResults = searchUrduBooks(q, PAGE_SIZE);
-      const pdfResults = catConfig.pdfCat
-        ? getAllPdfBooks().filter(b => b.categories?.includes(catConfig.pdfCat!) && (
-            b.title.toLowerCase().includes(q.toLowerCase()) ||
-            b.authors?.some(a => a.toLowerCase().includes(q.toLowerCase()))
-          )).slice(0, PAGE_SIZE)
-        : [];
-      const seen = new Set<string>();
-      const merged: Book[] = [];
-      for (const b of [...urduResults, ...pdfResults]) {
-        if (!seen.has(b.id)) { seen.add(b.id); merged.push(b); }
-      }
-      return merged.slice(0, PAGE_SIZE);
-    }
-    return searchBooks(q, PAGE_SIZE);
-  };
-
   const loadMore = async () => {
     if (loadingMore || !hasMore || searchMode) return;
     setLoadingMore(true);
 
     try {
-      if (catConfig && catConfig.source !== 'google') {
-        const moreBooks = loadBooksForCategory(books.length + PAGE_SIZE).slice(books.length);
-        if (!mountedRef.current) return;
-        if (moreBooks.length === 0) {
-          setHasMore(false);
-        } else {
-          setBooks(prev => [...prev, ...moreBooks]);
-        }
-      } else {
+      const moreBooks = loadBooksByKey(category || '', query || '', books.length + PAGE_SIZE).slice(books.length);
+      if (!mountedRef.current) return;
+      if (moreBooks.length === 0) {
         setHasMore(false);
+      } else {
+        setBooks(prev => [...prev, ...moreBooks]);
       }
     } catch {}
 
@@ -188,7 +128,7 @@ export default function ShelfCategoryScreen() {
     }
     setSearchMode(true);
     setLoading(true);
-    const results = await performSearch(searchQuery);
+    const results = searchLocal(searchQuery, PAGE_SIZE);
     if (mountedRef.current) {
       setBooks(results);
       setLoading(false);

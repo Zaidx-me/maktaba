@@ -8,13 +8,13 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  isDark: true,
-  colors: DarkColors,
+  isDark: false,
+  colors: LightColors,
   toggleTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
 
   const toggleTheme = useCallback(() => {
     setIsDark(prev => !prev);

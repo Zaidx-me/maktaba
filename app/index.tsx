@@ -57,12 +57,12 @@ export default function Index() {
             },
           ]}
         >
-          <Text style={[styles.logoText, { color: colors.buttonPrimaryText }]}>Z</Text>
+          <Text style={[styles.logoText, { color: colors.buttonPrimaryText }]}>M</Text>
         </Animated.View>
         <Animated.Text
           style={[styles.appName, { color: colors.textPrimary, opacity: opacityAnim }]}
         >
-          Zesho
+          Maktaba
         </Animated.Text>
       </View>
     );

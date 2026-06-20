@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, Modal, TextInput, TouchableOpacity,
-  KeyboardAvoidingView, Platform, Alert,
+  KeyboardAvoidingView, Platform, Alert, ScrollView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
@@ -34,19 +34,25 @@ export function RequestBookModal({ visible, onClose, prefilledTitle }: Props) {
     }
     setSubmitting(true);
     try {
-      await requestBook({
+      const result = await requestBook({
         title: title.trim(),
         author: author.trim() || 'Unknown',
         reason: reason.trim() || undefined,
         requestedBy: user?.uid || null,
         requestedByName: user?.email || undefined,
       });
-      Alert.alert('Request Sent', 'We\'ll review your request and add the book if possible.');
+      if (result.emailSent) {
+        Alert.alert('Request Sent', 'Your book request has been sent via email. Check your mail app to confirm.');
+      } else {
+        Alert.alert('Request Saved', 'Your request was saved locally. Please email zesho.support@gmail.com manually to submit it.');
+      }
       setTitle('');
       setAuthor('');
       setReason('');
       onClose();
-    } catch {}
+    } catch {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
     setSubmitting(false);
   };
 
@@ -59,59 +65,65 @@ export function RequestBookModal({ visible, onClose, prefilledTitle }: Props) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.overlay}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        style={styles.overlay}
+      >
         <TouchableOpacity style={[styles.overlay, { backgroundColor: colors.overlay }]} activeOpacity={1} onPress={handleClose}>
           <TouchableOpacity activeOpacity={1} onPress={() => {}} style={[styles.modal, { backgroundColor: colors.surface }]}>
-            <View style={[styles.handle, { backgroundColor: colors.textMuted }]} />
+            <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+              <View style={[styles.handle, { backgroundColor: colors.textMuted }]} />
 
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Request a Book</Text>
-            <Text style={[styles.modalSub, { color: colors.textSecondary }]}>
-              Can't find what you're looking for? Let us know and we'll try to add it.
-            </Text>
+              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Request a Book</Text>
+              <Text style={[styles.modalSub, { color: colors.textSecondary }]}>
+                Can't find what you're looking for? Let us know and we'll try to add it.
+              </Text>
 
-            <Text style={[styles.label, { color: colors.textSecondary }]}>Book Title *</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: colors.inputBg, color: colors.textPrimary, borderColor: colors.border }]}
-              value={title}
-              onChangeText={setTitle}
-              placeholder="e.g. The Alchemist"
-              placeholderTextColor={colors.textMuted}
-              autoFocus
-            />
+              <Text style={[styles.label, { color: colors.textSecondary }]}>Book Title *</Text>
+              <TextInput
+                style={[styles.input, { backgroundColor: colors.inputBg, color: colors.textPrimary, borderColor: colors.border }]}
+                value={title}
+                onChangeText={setTitle}
+                placeholder="e.g. The Alchemist"
+                placeholderTextColor={colors.textMuted}
+                autoFocus
+              />
 
-            <Text style={[styles.label, { color: colors.textSecondary }]}>Author</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: colors.inputBg, color: colors.textPrimary, borderColor: colors.border }]}
-              value={author}
-              onChangeText={setAuthor}
-              placeholder="e.g. Paulo Coelho"
-              placeholderTextColor={colors.textMuted}
-            />
+              <Text style={[styles.label, { color: colors.textSecondary }]}>Author</Text>
+              <TextInput
+                style={[styles.input, { backgroundColor: colors.inputBg, color: colors.textPrimary, borderColor: colors.border }]}
+                value={author}
+                onChangeText={setAuthor}
+                placeholder="e.g. Paulo Coelho"
+                placeholderTextColor={colors.textMuted}
+              />
 
-            <Text style={[styles.label, { color: colors.textSecondary }]}>Note (optional)</Text>
-            <TextInput
-              style={[styles.input, styles.textArea, { backgroundColor: colors.inputBg, color: colors.textPrimary, borderColor: colors.border }]}
-              value={reason}
-              onChangeText={setReason}
-              placeholder="Why do you want this book?"
-              placeholderTextColor={colors.textMuted}
-              multiline
-              numberOfLines={3}
-            />
+              <Text style={[styles.label, { color: colors.textSecondary }]}>Note (optional)</Text>
+              <TextInput
+                style={[styles.input, styles.textArea, { backgroundColor: colors.inputBg, color: colors.textPrimary, borderColor: colors.border }]}
+                value={reason}
+                onChangeText={setReason}
+                placeholder="Why do you want this book?"
+                placeholderTextColor={colors.textMuted}
+                multiline
+                numberOfLines={3}
+              />
 
-            <View style={styles.btnRow}>
-              <TouchableOpacity style={[styles.btn, { backgroundColor: colors.buttonSecondary }]} onPress={handleClose}>
-                <Text style={[styles.btnText, { color: colors.buttonSecondaryText }]}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.btn, styles.primaryBtn, { backgroundColor: colors.accent, opacity: submitting || !title.trim() ? 0.5 : 1 }]}
-                onPress={handleSubmit}
-                disabled={submitting || !title.trim()}
-              >
-                <MaterialIcons name="send" size={16} color={colors.white} />
-                <Text style={[styles.btnText, { color: colors.white }]}>Send Request</Text>
-              </TouchableOpacity>
-            </View>
+              <View style={styles.btnRow}>
+                <TouchableOpacity style={[styles.btn, { backgroundColor: colors.buttonSecondary }]} onPress={handleClose}>
+                  <Text style={[styles.btnText, { color: colors.buttonSecondaryText }]}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.btn, styles.primaryBtn, { backgroundColor: colors.accent, opacity: submitting || !title.trim() ? 0.5 : 1 }]}
+                  onPress={handleSubmit}
+                  disabled={submitting || !title.trim()}
+                >
+                  <MaterialIcons name="send" size={16} color={colors.white} />
+                  <Text style={[styles.btnText, { color: colors.white }]}>Send Request</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
           </TouchableOpacity>
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -127,6 +139,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingBottom: Spacing.xxxl,
     paddingTop: Spacing.sm,
+    maxHeight: '80%',
   },
   handle: { width: 36, height: 4, borderRadius: BorderRadius.full, alignSelf: 'center', marginBottom: Spacing.lg },
   modalTitle: { fontSize: FontSize.heading4, fontWeight: FontWeight.bold, letterSpacing: -0.3, marginBottom: Spacing.xxs },

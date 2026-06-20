@@ -82,34 +82,26 @@ export async function addNote(note: Note) {
   await AsyncStorage.setItem(key, JSON.stringify(notes));
 }
 
-export async function updateNote(noteId: string, updates: Partial<Note>) {
-  const allKeys = await AsyncStorage.getAllKeys();
-  const noteKeys = allKeys.filter(k => k.startsWith('local_notes_'));
-  for (const key of noteKeys) {
-    const raw = await AsyncStorage.getItem(key);
-    if (!raw) continue;
-    const notes: Note[] = JSON.parse(raw);
-    const idx = notes.findIndex(n => n.id === noteId);
-    if (idx !== -1) {
-      notes[idx] = { ...notes[idx], ...updates };
-      await AsyncStorage.setItem(key, JSON.stringify(notes));
-      return;
-    }
+export async function updateNote(userId: string, noteId: string, updates: Partial<Note>) {
+  const key = userNotesKey(userId);
+  const raw = await AsyncStorage.getItem(key);
+  if (!raw) return;
+  const notes: Note[] = JSON.parse(raw);
+  const idx = notes.findIndex(n => n.id === noteId);
+  if (idx !== -1) {
+    notes[idx] = { ...notes[idx], ...updates };
+    await AsyncStorage.setItem(key, JSON.stringify(notes));
   }
 }
 
-export async function deleteNote(noteId: string) {
-  const allKeys = await AsyncStorage.getAllKeys();
-  const noteKeys = allKeys.filter(k => k.startsWith('local_notes_'));
-  for (const key of noteKeys) {
-    const raw = await AsyncStorage.getItem(key);
-    if (!raw) continue;
-    const notes: Note[] = JSON.parse(raw);
-    const filtered = notes.filter(n => n.id !== noteId);
-    if (filtered.length !== notes.length) {
-      await AsyncStorage.setItem(key, JSON.stringify(filtered));
-      return;
-    }
+export async function deleteNote(userId: string, noteId: string) {
+  const key = userNotesKey(userId);
+  const raw = await AsyncStorage.getItem(key);
+  if (!raw) return;
+  const notes: Note[] = JSON.parse(raw);
+  const filtered = notes.filter(n => n.id !== noteId);
+  if (filtered.length !== notes.length) {
+    await AsyncStorage.setItem(key, JSON.stringify(filtered));
   }
 }
 

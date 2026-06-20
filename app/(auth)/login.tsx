@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../src/context/ThemeContext';
 import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../../src/constants/theme';
-import { signInWithEmail, signUpWithEmail } from '../../src/services/auth';
+import { signInWithEmail, signUpWithEmail, resetPassword } from '../../src/services/auth';
 import { useAuth } from '../../src/context/AuthContext';
 
 export default function LoginScreen() {
@@ -23,6 +23,9 @@ export default function LoginScreen() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [navigating, setNavigating] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
 
   const goToTabs = () => {
     setNavigating(true);
@@ -67,6 +70,27 @@ export default function LoginScreen() {
     router.replace('/(tabs)');
   };
 
+  const handleForgotPassword = async () => {
+    if (!resetEmail.trim()) {
+      Alert.alert('Error', 'Please enter your email address');
+      return;
+    }
+    setResetLoading(true);
+    try {
+      await resetPassword(resetEmail.trim());
+      setResetLoading(false);
+      setShowForgotPassword(false);
+      setResetEmail('');
+      Alert.alert('Email Sent', 'Check your inbox for a password reset link.');
+    } catch (e: any) {
+      setResetLoading(false);
+      let msg = 'Something went wrong';
+      if (e?.code === 'auth/user-not-found') msg = 'No account found with this email';
+      else if (e?.code === 'auth/invalid-email') msg = 'Invalid email address';
+      Alert.alert('Error', msg);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -83,7 +107,7 @@ export default function LoginScreen() {
           <View style={[styles.logoCircle, { backgroundColor: colors.accentSoft }]}>
             <MaterialIcons name="menu-book" size={32} color={colors.accentBright} />
           </View>
-          <Text style={[styles.appName, { color: colors.textPrimary }]}>Zesho</Text>
+          <Text style={[styles.appName, { color: colors.textPrimary }]}>Maktaba</Text>
           <Text style={[styles.tagline, { color: colors.textSecondary }]}>
             {isSignUp ? 'Create your account' : 'Welcome back'}
           </Text>
@@ -135,6 +159,12 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
+          {!isSignUp && (
+            <TouchableOpacity onPress={() => { setResetEmail(email); setShowForgotPassword(true); }} style={styles.forgotRow}>
+              <Text style={[styles.forgotText, { color: colors.accentBright }]}>Forgot Password?</Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             style={[styles.submitBtn, { backgroundColor: colors.buttonPrimary }, Shadows.elevated]}
             onPress={handleEmailAuth}
@@ -175,6 +205,49 @@ export default function LoginScreen() {
       {(loading || navigating) && (
         <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
           <ActivityIndicator size="large" color={colors.buttonPrimary} />
+        </View>
+      )}
+
+      {showForgotPassword && (
+        <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={[styles.resetModal, { backgroundColor: colors.surface }]}
+          >
+            <Text style={[styles.resetTitle, { color: colors.textPrimary }]}>Reset Password</Text>
+            <Text style={[styles.resetSub, { color: colors.textSecondary }]}>
+              Enter your email and we'll send you a reset link.
+            </Text>
+            <TextInput
+              style={[styles.resetInput, { backgroundColor: colors.inputBg, color: colors.textPrimary, borderColor: colors.border }]}
+              placeholder="Email address"
+              placeholderTextColor={colors.textMuted}
+              value={resetEmail}
+              onChangeText={setResetEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoFocus
+            />
+            <View style={styles.resetBtns}>
+              <TouchableOpacity
+                style={[styles.resetBtn, { backgroundColor: colors.buttonSecondary }]}
+                onPress={() => { setShowForgotPassword(false); setResetEmail(''); }}
+              >
+                <Text style={[styles.resetBtnText, { color: colors.buttonSecondaryText }]}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.resetBtn, { backgroundColor: colors.buttonPrimary, opacity: resetLoading || !resetEmail.trim() ? 0.5 : 1 }]}
+                onPress={handleForgotPassword}
+                disabled={resetLoading || !resetEmail.trim()}
+              >
+                {resetLoading ? (
+                  <ActivityIndicator size="small" color={colors.buttonPrimaryText} />
+                ) : (
+                  <Text style={[styles.resetBtnText, { color: colors.buttonPrimaryText }]}>Send Link</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
         </View>
       )}
     </KeyboardAvoidingView>
@@ -224,4 +297,24 @@ const styles = StyleSheet.create({
   skipText: { fontSize: FontSize.bodySm, fontWeight: FontWeight.medium },
   terms: { fontSize: FontSize.xs, textAlign: 'center', marginTop: Spacing.xl, lineHeight: 18 },
   overlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' },
+  forgotRow: { alignItems: 'flex-end', marginTop: -Spacing.xs },
+  forgotText: { fontSize: FontSize.bodySm, fontWeight: FontWeight.semibold },
+  resetModal: {
+    marginHorizontal: Spacing.xxl,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xl,
+  },
+  resetTitle: { fontSize: FontSize.heading4, fontWeight: FontWeight.bold, marginBottom: Spacing.xs },
+  resetSub: { fontSize: FontSize.bodySm, marginBottom: Spacing.lg, lineHeight: 20 },
+  resetInput: {
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    height: 48,
+    fontSize: FontSize.bodyMd,
+    borderWidth: 1,
+    marginBottom: Spacing.lg,
+  },
+  resetBtns: { flexDirection: 'row', gap: Spacing.sm },
+  resetBtn: { flex: 1, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center' },
+  resetBtnText: { fontSize: FontSize.bodyMd, fontWeight: FontWeight.semibold },
 });

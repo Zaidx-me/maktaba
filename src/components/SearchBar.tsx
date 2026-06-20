@@ -11,7 +11,7 @@ interface SearchBarProps {
   onSubmitEditing?: () => void;
 }
 
-export function SearchBar({ value, onChangeText, placeholder = 'Search', onSubmitEditing }: SearchBarProps) {
+export const SearchBar = React.memo(function SearchBar({ value, onChangeText, placeholder = 'Search', onSubmitEditing }: SearchBarProps) {
   const { colors } = useTheme();
 
   return (
@@ -33,7 +33,7 @@ export function SearchBar({ value, onChangeText, placeholder = 'Search', onSubmi
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -42,11 +42,13 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     borderRadius: BorderRadius.sm,
     paddingHorizontal: Spacing.md,
-    height: 36,
+    paddingVertical: Spacing.sm,
+    minHeight: 44,
     borderWidth: StyleSheet.hairlineWidth,
   },
   input: {
     flex: 1,
     fontSize: FontSize.bodyMd,
+    paddingVertical: 0,
   },
 });

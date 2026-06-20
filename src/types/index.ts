@@ -36,14 +36,3 @@ export interface Note {
   createdAt: number;
   updatedAt: number;
 }
-
-export interface UserProfile {
-  uid: string;
-  displayName: string;
-  email: string;
-  photoURL: string;
-  createdAt: number;
-  booksRead: number;
-  booksReading: number;
-  booksWantToRead: number;
-}

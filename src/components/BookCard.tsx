@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Book } from '../types';
 import { Spacing, FontSize, FontWeight, BorderRadius, Shadows } from '../constants/theme';
@@ -44,10 +45,11 @@ export const BookCard = React.memo(function BookCard({ book, onPress, size = 120
       <View style={[styles.imageContainer, { width: size, height: imageHeight, borderRadius: BorderRadius.md }]}>
         {book.thumbnail ? (
           <Image
-            source={{ uri: book.thumbnail, cache: 'force-cache' }}
+            source={{ uri: book.thumbnail }}
             style={styles.image}
-            fadeDuration={200}
-            resizeMode="cover"
+            contentFit="cover"
+            transition={200}
+            cachePolicy="memory-disk"
           />
         ) : (
           <BookCoverPlaceholder title={book.title} width={size} height={imageHeight} />

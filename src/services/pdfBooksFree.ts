@@ -83,12 +83,6 @@ function getMainCategoryIndex(): Record<string, Book[]> {
   return _mainCategoryIndex;
 }
 
-export function getPdfBooksByCategory(category: string, limit?: number): Book[] {
-  const key = category.toLowerCase();
-  const result = getCategoryIndex()[key] || [];
-  return limit ? result.slice(0, limit) : result;
-}
-
 export function getPdfBooksByMainCategory(mainCategory: string, limit?: number): Book[] {
   const result = getMainCategoryIndex()[mainCategory] || [];
   return limit ? result.slice(0, limit) : result;

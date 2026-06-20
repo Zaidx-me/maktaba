@@ -135,33 +135,11 @@ export function searchUrduBooks(query: string, limit: number = 20): Book[] {
     .slice(0, limit);
 }
 
-export function getUrduCategories(): string[] {
-  return Object.keys(data.categories);
-}
-
 export function getUrduMainCategories(): { name: string; count: number }[] {
   return Object.entries(data.categories)
     .filter(([, count]) => count > 0)
     .sort(([, a], [, b]) => b - a)
     .map(([name, count]) => ({ name, count }));
-}
-
-export function getUrduCategoryCount(category: string): number {
-  return data.categories[category] || 0;
-}
-
-export function getUrduSubcategories(mainCategory: string): string[] {
-  const subs = new Set<string>();
-  for (const raw of data.books) {
-    if (raw.cat.includes(mainCategory) && raw.sub) {
-      subs.add(raw.sub);
-    }
-  }
-  return Array.from(subs).sort();
-}
-
-export function getUrduBookCount(): number {
-  return data.total;
 }
 
 // Build a map for O(1) ID lookup

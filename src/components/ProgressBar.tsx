@@ -8,7 +8,7 @@ interface ProgressBarProps {
   height?: number;
 }
 
-export function ProgressBar({ progress, height = 2 }: ProgressBarProps) {
+export const ProgressBar = React.memo(function ProgressBar({ progress, height = 2 }: ProgressBarProps) {
   const { colors } = useTheme();
   const clampedProgress = Math.min(1, Math.max(0, progress));
 
@@ -26,7 +26,7 @@ export function ProgressBar({ progress, height = 2 }: ProgressBarProps) {
       />
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

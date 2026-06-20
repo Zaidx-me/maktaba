@@ -1,24 +1,24 @@
 {
   "expo": {
-    "name": "Zesho",
-    "slug": "Zesho",
+    "name": "Maktaba",
+    "slug": "Maktaba",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
-    "scheme": "zesho",
+    "userInterfaceStyle": "light",
+    "scheme": "maktaba",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.zesho.app"
+      "bundleIdentifier": "com.maktaba.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0a0a0a"
+        "backgroundColor": "#FAF8F5"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.zaidxme.zesho",
+      "package": "com.zaidxme.maktaba",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -28,13 +28,7 @@
     "plugins": [
       "expo-router",
       "expo-system-ui",
-      [
-        "expo-web-browser",
-        {
-          "preference": "chrome"
-        }
-      ],
-      "expo-secure-store"
+      "expo-mail-composer"
     ]
   }
 }

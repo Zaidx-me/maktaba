@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const KEYS = {
-  USER_UID: 'zesho_user_uid',
-  USER_EMAIL: 'zesho_user_email',
-  USER_NAME: 'zesho_user_name',
-  SKIPPED: 'zesho_skipped',
+  USER_UID: 'maktaba_user_uid',
+  USER_EMAIL: 'maktaba_user_email',
+  USER_NAME: 'maktaba_user_name',
+  SKIPPED: 'maktaba_skipped',
 };
 
 export async function saveSession(uid: string, email?: string | null, name?: string | null) {
@@ -46,6 +46,6 @@ export async function getSkipped(): Promise<boolean> {
 
 export async function clearAllLocalData() {
   const keys = await AsyncStorage.getAllKeys();
-  const localKeys = keys.filter(k => k.startsWith('local_') || k.startsWith('zesho_'));
+  const localKeys = keys.filter(k => k.startsWith('local_') || k.startsWith('maktaba_'));
   await AsyncStorage.multiRemove(localKeys);
 }

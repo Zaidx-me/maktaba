@@ -18,7 +18,7 @@ interface Notification {
 }
 
 const ALL_NOTIFICATIONS: Notification[] = [
-  { id: '1', title: 'Welcome to Zesho', message: 'Discover thousands of free books from world-class libraries.', time: '2 min ago', icon: 'menu-book' },
+  { id: '1', title: 'Welcome to Maktaba', message: 'Discover thousands of free Urdu and PDF books.', time: '2 min ago', icon: 'menu-book' },
   { id: '2', title: 'New Urdu Collection', message: '2,138+ Urdu books just added. Explore classics, poetry, and more.', time: '1 hour ago', icon: 'translate' },
   { id: '3', title: 'Reading Reminder', message: 'Continue where you left off. Your books are waiting!', time: '3 hours ago', icon: 'history' },
 ];

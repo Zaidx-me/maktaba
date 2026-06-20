@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Image, TouchableOpacity,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity,
   ActivityIndicator, Alert, Share, Linking, Dimensions,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../../src/context/AuthContext';
 import { useTheme } from '../../src/context/ThemeContext';
-import { getBookById } from '../../src/services/googleBooks';
+import { getUrduBookById } from '../../src/services/urduBooks';
+import { getPdfBookById } from '../../src/services/pdfBooksFree';
 import { addBookToLibrary, isInLibrary, getNotesForBook, updateBookStatus, updateBookRating } from '../../src/services/books';
 
 import { Book, Note } from '../../src/types';
@@ -42,7 +44,14 @@ export default function BookDetailScreen() {
   const loadBook = async () => {
     if (!id) return;
     setLoading(true);
-    const bookData = await getBookById(id);
+
+    let bookData: Book | null = null;
+    if (id.startsWith('urdu_')) {
+      bookData = getUrduBookById(id);
+    } else if (id.startsWith('pdf_')) {
+      bookData = getPdfBookById(id);
+    }
+
     if (!mountedRef.current) return;
     setBook(bookData);
     if (!user || !bookData) { if (mountedRef.current) setLoading(false); return; }
@@ -153,7 +162,7 @@ export default function BookDetailScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Hero section with blurred background */}
         <View style={styles.heroSection}>
-          {book.thumbnail ? <Image source={{ uri: book.thumbnail }} style={styles.heroBg} /> : null}
+          {book.thumbnail ? <Image source={{ uri: book.thumbnail }} style={styles.heroBg} contentFit="cover" /> : null}
           <View style={[styles.heroOverlay, { backgroundColor: colors.overlay }]} />
 
           {/* Nav bar */}
@@ -170,7 +179,7 @@ export default function BookDetailScreen() {
           <View style={styles.heroContent}>
             <View style={styles.coverShadow}>
               {book.thumbnail ? (
-                <Image source={{ uri: book.thumbnail }} style={styles.cover} />
+                <Image source={{ uri: book.thumbnail }} style={styles.cover} contentFit="cover" transition={200} cachePolicy="memory-disk" />
               ) : (
                 <View style={[styles.coverPlaceholder, { backgroundColor: colors.surfaceElevated }]}>
                   <Text style={[styles.coverLetter, { color: colors.buttonPrimary }]}>{book.title[0]}</Text>
@@ -325,7 +334,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: Spacing.sm },
   heroSection: { height: 340, justifyContent: 'flex-end', overflow: 'hidden' },
-  heroBg: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%', resizeMode: 'cover', opacity: 0.25 },
+  heroBg: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%', opacity: 0.25 },
   heroOverlay: { ...StyleSheet.absoluteFillObject },
   navBar: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: Spacing.lg, paddingBottom: Spacing.md },
   navBtn: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
@@ -334,7 +343,7 @@ const styles = StyleSheet.create({
     width: COVER_W, height: COVER_H, borderRadius: BorderRadius.lg, overflow: 'hidden',
     ...Shadows.elevated,
   },
-  cover: { width: '100%', height: '100%', resizeMode: 'cover' },
+  cover: { width: '100%', height: '100%' },
   coverPlaceholder: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   coverLetter: { fontSize: FontSize.heroDisplay, fontWeight: FontWeight.extrabold },
   body: { paddingTop: Spacing.md },

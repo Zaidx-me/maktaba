@@ -21,8 +21,8 @@ export default function HelpScreen() {
   const faqItems = [
     {
       icon: 'menu-book' as const,
-      q: 'What is Zesho?',
-      a: 'Zesho is a free book reading app with thousands of books from Google Books, Gutendex, Open Library, and 2,138+ Urdu books from TheLibraryPK.',
+      q: 'What is Maktaba?',
+      a: 'Maktaba is a free book reading app with thousands of Urdu books and PDF books from TheLibraryPK and PDFBooksFree.',
     },
     {
       icon: 'library-books' as const,
@@ -32,7 +32,7 @@ export default function HelpScreen() {
     {
       icon: 'attach-money' as const,
       q: 'Are all books free?',
-      a: 'Yes! Zesho provides access to public domain books and free samples. No payment is required.',
+      a: 'Yes! Maktaba provides access to free Urdu books and PDF books. No payment is required.',
     },
     {
       icon: 'dark-mode' as const,
@@ -56,7 +56,7 @@ export default function HelpScreen() {
           <View style={[styles.logoCircle, { backgroundColor: colors.accentSoft }]}>
             <MaterialIcons name="menu-book" size={28} color={colors.accent} />
           </View>
-          <Text style={[styles.appName, { color: colors.textPrimary }]}>Zesho</Text>
+          <Text style={[styles.appName, { color: colors.textPrimary }]}>Maktaba</Text>
           <Text style={[styles.appVersion, { color: colors.textTertiary }]}>Version 1.0.0</Text>
         </View>
 
@@ -86,13 +86,13 @@ export default function HelpScreen() {
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Contact</Text>
         <TouchableOpacity
           style={[styles.contactItem, { backgroundColor: colors.surfaceElevated }]}
-          onPress={() => Linking.openURL('mailto:zesho.support@gmail.com')}
+          onPress={() => Linking.openURL('mailto:maktaba.support@gmail.com')}
           activeOpacity={0.7}
         >
           <View style={[styles.contactIconWrap, { backgroundColor: colors.accentSoft }]}>
             <MaterialIcons name="mail-outline" size={20} color={colors.accent} />
           </View>
-          <Text style={[styles.contactText, { color: colors.textPrimary }]}>zesho.support@gmail.com</Text>
+          <Text style={[styles.contactText, { color: colors.textPrimary }]}>maktaba.support@gmail.com</Text>
           <MaterialIcons name="chevron-right" size={18} color={colors.textMuted} />
         </TouchableOpacity>
 

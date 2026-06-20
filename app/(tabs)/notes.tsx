@@ -50,13 +50,14 @@ export default function NotesScreen() {
   };
 
   const handleDelete = (noteId: string) => {
+    if (!user) return;
     Alert.alert('Delete Note', 'Are you sure you want to delete this note?', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
         style: 'destructive',
         onPress: async () => {
-          await deleteNote(noteId);
+          await deleteNote(user.uid, noteId);
           setNotes(notes.filter(n => n.id !== noteId));
         },
       },
@@ -69,8 +70,8 @@ export default function NotesScreen() {
   };
 
   const handleSaveEdit = async (noteId: string) => {
-    if (!editContent.trim()) return;
-    await updateNote(noteId, { content: editContent.trim(), updatedAt: Date.now() });
+    if (!editContent.trim() || !user) return;
+    await updateNote(user.uid, noteId, { content: editContent.trim(), updatedAt: Date.now() });
     setNotes(notes.map(n => n.id === noteId ? { ...n, content: editContent.trim() } : n));
     setEditingId(null);
     setEditContent('');
